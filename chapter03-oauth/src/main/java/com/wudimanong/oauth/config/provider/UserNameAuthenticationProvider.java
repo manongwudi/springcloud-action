@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * @author joe
- * @desc 手机验证码登陆
+ * @desc 用户名/密码验证登陆
  */
 public class UserNameAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 

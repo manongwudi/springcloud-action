@@ -7,6 +7,7 @@ import com.wudimanong.oauth.service.UsernameUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
+@Order(1)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -45,8 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/index", "/confirm_access", "/actuator/health", "/internel/**", "/metrics",
-                "/env/**", "/refresh", "/css/**", "/images/**", "/js/**", "/error");
+        web.ignoring()
+                .antMatchers("/index", "/actuator/health", "/internel/**", "/metrics",
+                        "/env/**", "/refresh", "/css/**", "/images/**", "/js/**", "/error");
     }
 
     @Override
@@ -54,16 +57,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterAt(getLoginAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests().anyRequest().authenticated();
-        http.formLogin().loginPage("/login").failureUrl("/login?code=").permitAll();
+        http.formLogin().loginPage("/login").failureUrl("/login?code=")
+                .permitAll();
         http.logout().logoutSuccessUrl("/backReferer").permitAll();
-        http.csrf().disable();
-        http.authorizeRequests().antMatchers("/authorize").permitAll();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
 
         http.logout().permitAll()
                 .logoutUrl("/logout")
                 .invalidateHttpSession(true).clearAuthentication(true)
                 .logoutSuccessHandler(new LogoutHandler());
+
+        //不拦截 oauth 开放的资源
+        http.csrf().disable();
+
     }
 
     /**

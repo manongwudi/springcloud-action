@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author joe
- * @desc 自定义 AuthenticationProvider,以使用自定义的 MyAuthenticationToken
+ * @desc 自定义 AuthenticationProvider
  */
 public abstract class AbstractUserDetailsAuthenticationProvider implements AuthenticationProvider, InitializingBean,
         MessageSourceAware {
