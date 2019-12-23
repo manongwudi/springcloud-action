@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/oauth
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    separator: //
+  #redis本地配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+  main:
+    allow-bean-definition-overriding: true
+  # freemarker配置
+  freemarker:
+    request-context-attribute: request
+    expose-request-attributes: true
+    expose-session-attributes: true
+
+encrypt:
+  key-store:
+    location: classpath:/keystore.jks
+    alias: mytest
+    password: 123456
+    secret: 123456
+
+#全局访问路径
+server:
+  servlet:
+    context-path: /oauth
+
+logging:
+  level:
+    org.springframework.security: DEBUG
