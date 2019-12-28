@@ -18,14 +18,4 @@ public class FenceApplication {
     public static void main(String[] args) {
         SpringApplication.run(FenceApplication.class, args);
     }
-
-    /**
-     * MyBatis-Plus Postgresql序列Key生成器配置
-     *
-     * @return
-     */
-    @Bean
-    public PostgreKeyGenerator createPostgreKeyGenerator() {
-        return new com.baomidou.mybatisplus.extension.incrementer.PostgreKeyGenerator();
-    }
 }
