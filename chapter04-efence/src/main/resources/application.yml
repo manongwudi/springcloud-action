@@ -1,11 +1,11 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://127.0.0.1:54321/gis
-    username: gis
-    password: 123456
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: org.postgresql.Driver
-    separator: //
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://127.0.0.1:54321/gis
+#    username: gis
+#    password: 123456
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    driver-class-name: org.postgresql.Driver
+#    separator: //
 
 #MyBatis-Plus集成配置
 mybatis-plus:
