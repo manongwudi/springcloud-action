@@ -47,12 +47,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <!--提供给MapStruct使用 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
         </plugins>
 
         <resources>
@@ -65,13 +59,6 @@
                     <include>**/bootstrap.yml</include>
                     <include>**/bootstrap.yaml</include>
                     <include>**/*.xml</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources/repos</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/**</include>
                 </includes>
             </resource>
         </resources>
