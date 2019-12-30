@@ -1,43 +1,19 @@
 spring:
   application:
     name: configserver
-  profiles:
-    active: native
   cloud:
     config:
       server:
         #关闭健康性检查
         health.enabled: false
-        native:
-          uri: classpath:repos/config
-          searchPaths: 'common,{application}'
-          cloneOnStart: true
-          repos:
-            user:
-              pattern: user-*
-              cloneOnStart: true
-              uri: classpath:repos/user/config
-              searchPaths: 'common,{application}'
-            oauth:
-              pattern: oauth-*
-              cloneOnStart: true
-              uri: classpath:repos/oauth/config
-              searchPaths: 'common,{application}'
-            efence:
-              pattern: efence-*
-              cloneOnStart: true
-              uri: classpath:repos/efence/config
-              searchPaths: 'common,{application}'
+        #配置github仓库路径（实际内部使用换成自己的gitLab仓库）
+        git:
+          uri: https://github.com/manongwudi/repos.git
+          search-paths: 'common,{application}'
+          #启动时克隆存储库
+          clone-on-start: true
     consul:
       discovery:
         prefer-ip-address: true
         tags: api
-
-#配置加密
-#encrypt:
-#  keyStore:
-#    location: classpath:/server.jks
-#    password: configsecret2
-#    alias: configkey
-#    secret: configsecret
 
