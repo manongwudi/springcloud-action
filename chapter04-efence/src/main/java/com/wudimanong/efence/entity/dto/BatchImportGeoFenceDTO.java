@@ -34,5 +34,4 @@ public class BatchImportGeoFenceDTO implements Serializable {
      * 批次导入ID
      */
     private Integer batchId;
-
 }

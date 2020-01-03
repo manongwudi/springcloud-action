@@ -1,11 +1,11 @@
-#spring:
-#  datasource:
-#    url: jdbc:postgresql://127.0.0.1:54321/gis
-#    username: gis
-#    password: 123456
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    driver-class-name: org.postgresql.Driver
-#    separator: //
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:54321/gis
+    username: gis
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.postgresql.Driver
+    separator: //
 
 #MyBatis-Plus集成配置
 mybatis-plus:
@@ -13,6 +13,8 @@ mybatis-plus:
   mapper-locations: classpath:mybatis/*.xml
   # PO实体类扫描包路径，多个package用逗号分割
   typeAliasesPackage: com.wudimanong.efence.dao.model
+  #Mybatis-Plus处理PostGis类型映射问题
+  typeHandlersPackage: com.eyougo.mybatis.postgis.type
   global-config:
     db-config:
       #主键类型

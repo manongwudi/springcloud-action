@@ -100,6 +100,49 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
+
+        <!--PostGIS空间数据库驱动-->
+        <dependency>
+            <groupId>org.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>1.3.3</version>
+        </dependency>
+        <!--Mybatis无法识别PostGis geometry等数据类型的适配-->
+        <dependency>
+            <groupId>com.eyougo</groupId>
+            <artifactId>mybatis-typehandlers-postgis</artifactId>
+            <version>1.0</version>
+            <exclusions>
+                <!--排除Mybatis冲突依赖-->
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--Geo Java计算工具包,不使用PostGis提供的函数，通过Java代码进行计算可引入如下工具包-->
+        <!--<dependency>
+             <groupId>org.geotools</groupId>
+             <artifactId>gt-geojson</artifactId>
+             <version>9.3</version>
+         </dependency>-->
+        <dependency>
+            <groupId>com.github.davidmoten</groupId>
+            <artifactId>geo</artifactId>
+            <version>0.7.6</version>
+        </dependency>
+        <!--引入JTS包中提供的拓扑服务中的常用算法-->
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts-io</artifactId>
+            <version>1.14.0</version>
+        </dependency>
     </dependencies>
 
     <build>

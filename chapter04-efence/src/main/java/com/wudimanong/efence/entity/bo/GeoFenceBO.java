@@ -42,10 +42,10 @@ public class GeoFenceBO implements Serializable {
      * 围栏的空间信息表示(尽量完全合法的GeoJson)
      */
     @NotNull(message = "围栏位置信息不能为空")
-    private String region;
+    private String regionGeoJson;
 
     /**
-     * 自定义JSON（冗余围栏GeoJson）
+     * 自定义JSON（自定义围栏业务信息）
      */
     private String customInfo;
 
