@@ -1,4 +1,4 @@
---余额订单信息表，用于余额充值、退款等涉及交易支付逻辑的处理
+#余额订单信息表，用于余额充值、退款等涉及交易支付逻辑的处理
 create table user_balance_order
 (
   id          bigint not null primary key auto_increment,
@@ -16,12 +16,12 @@ create table user_balance_order
 );
 
 alter table user_balance_order comment '电子钱包余额订单表';
---添加索引信息
+#添加索引信息
 alter table user_balance_order add index unique_idx_order_id(order_id);
 alter table user_balance_order add index idx_user_id(user_id);
 alter table user_balance_order add index idx_trade_time(trade_time);
 
---用户余额信息表
+#用户余额信息表
 create table user_balance
 (
   id          bigint not null primary key auto_increment,
@@ -35,11 +35,11 @@ create table user_balance
 );
 
 alter table user_balance comment '用户个人余额账户信息表';
---添加相应索引
+#添加相应索引
 alter table user_balance add index idx_ub_user_id(user_id);
 alter table user_balance add index idx_ub_acc_no(acc_no);
 
---用户余额账户流水信息表，用于记录用户余额变动流水
+#用户余额账户流水信息表，用于记录用户余额变动流水
 create table user_balance_flow
 (
   id            bigint not null primary key auto_increment,
@@ -58,7 +58,7 @@ create table user_balance_flow
 
 alter table user_balance_flow comment '余额变动流水信息表';
 
---创建相关索引信息
+#创建相关索引信息
 alter table user_balance_flow add index idx_ubf_user_id(user_id);
 alter table user_balance_flow add index idx_ubf_acc_no(acc_no);
 alter table user_balance_flow add index idx_ubf_flow_no(flow_no);
