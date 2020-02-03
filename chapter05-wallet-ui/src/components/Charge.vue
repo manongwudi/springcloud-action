@@ -1,22 +1,22 @@
 <template>
+  <div id="charge">
   <el-card class="box-card">
-    <ul class="msg-box">
+     <ul class="msg-box">
       <li>
         <h4>钱包充值</h4>
       </li>
       <li>
           <h4 style="margin-bottom: 15px;">充值金额</h4>
             <el-radio-group v-model="amountVal" @change="amountChange">
-                <el-radio border :label="''+ 100">充值100</el-radio>
-                <el-radio border :label="''+ 500">充值500</el-radio>
-                <el-radio border :label="''+ 1000">充值1000</el-radio>
-                <el-radio border :label="''+ 2000">充值2000</el-radio>
-                <el-radio border :label="''+ 5000">充值5000</el-radio>
+                <el-radio border :label="''+ 20">¥20</el-radio>
+                <el-radio border :label="''+ 50">¥50</el-radio>
+                <el-radio border :label="''+ 100">¥100</el-radio>
+                <el-radio border :label="''+ 200">¥200</el-radio>
                 <el-radio border :label="''">自定义</el-radio>
             </el-radio-group>
       </li>
       <li>
-          <h4 style="margin-bottom: 15px;">充值方式</h4>
+          <h4 style="margin-bottom: 15px;">支付方式</h4>
             <el-radio-group v-model="rechargeParams.paymentType" @change="paymentTypeChange">
                 <el-radio border :label="''+ 0">微信</el-radio>
                 <el-radio border :label="''+ 1">支付宝</el-radio>
@@ -31,6 +31,7 @@
       <el-button type="primary" @click="surePay">确认支付</el-button>
     </div>
   </el-card>
+  </div>
 </template>
 
 <script>
@@ -129,10 +130,18 @@ export default {
 </script>
 
 <style scoped>
-    /* 信息列表样式 */
-    .msg-box > li {
-        list-style: none;
-        border-bottom: 1px solid #c5c5c5;
-        padding: 20px 10px;
-    }
+#charge {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  color: #2c3e50;
+  margin-top: 0px;
+}
+/* 信息列表样式 */
+.msg-box > li {
+  list-style: none;
+    border-bottom: 1px solid #c5c5c5;
+    padding: 20px 10px;
+}
 </style>
