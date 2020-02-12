@@ -40,6 +40,26 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 统一持久层异常处理方法
+     *
+     * @param response
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(DAOException.class)
+    @ResponseBody
+    public ResponseResult<?> processDaoException(
+            HttpServletResponse response, DAOException e) {
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType("application/json;charset=UTF-8");
+        ResponseResult result = new ResponseResult();
+        result.setCode(e.getCode());
+        result.setMessage(e.getMessage());
+        log.error(e.toString() + "_" + e.getMessage(), e);
+        return result;
+    }
+
+    /**
      * 统一处理参数校验错误异常
      *
      * @param response
