@@ -9,10 +9,5 @@ spring:
         preferIpAddress: true
         instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}:@project.version@
         healthCheckPath: /actuator/health
-
 server:
-  port: 8080
-
-feign:
-  hystrix:
-    enabled: true
+  port: 9091
