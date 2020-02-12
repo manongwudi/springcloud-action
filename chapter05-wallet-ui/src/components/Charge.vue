@@ -24,7 +24,7 @@
       </li>
       <li>
           <h4 style="margin-bottom: 15px;">充值金额</h4>
-          <el-input :disabled="disabled" clearable v-model="rechargeParams.totalAmt" placeholder="请输入金额" style="width: 150px;"></el-input>
+          <el-input :disabled="disabled" clearable v-model="rechargeParams.amount" placeholder="请输入金额" style="width: 150px;"></el-input>
       </li>
     </ul>
     <div style="text-align: center; margin-top: 30px;">
@@ -35,23 +35,32 @@
 </template>
 
 <script>
+// 引入axios
+// eslint-disable-next-line no-unused-vars
+import axios from 'axios'
+
 export default {
   data () {
     return {
       amountVal: '',
       disabled: false,
-      // 充值参数
+      // 充值交易参数
       rechargeParams: {
-        'totalAmt': '', // 金额
-        'paymentType': '0', // 支付方式[0:微信,1:支付宝,2:余额,3:活动]
-        'transType': '0' // 交易类型[0:充值,1:消费]
+        // eslint-disable-next-line no-undef
+        // 获取用户ID
+        'userId': this.$route.query.userId,
+        'amount': '', // 金额
+        'currency': 'CNY', // 币种
+        'paymentType': '0', // 支付方式[0:微信,1:支付宝]
+        'isRenew': '0' // 是否自动续费[0:否,1:是]
       }
     }
   },
   methods: {
-    // 充值金额
-    amountChange (val) {
-      this.rechargeParams.totalAmt = val
+    // 充值金额选择事件联动函数
+    amountChange: function (val) {
+      // 后端接口金额以分为单位
+      this.rechargeParams.amount = val
       // eslint-disable-next-line eqeqeq
       if (val == '') {
         this.disabled = false
@@ -59,29 +68,32 @@ export default {
         this.disabled = true
       }
     },
-    // 支付方式
-    paymentTypeChange (val) {
+    // 支付方式选择事件联动函数
+    paymentTypeChange: function (val) {
       this.rechargeParams.paymentType = val
     },
-    // 确认支付
+    // 确认支付按钮事件触发函数
     async surePay () {
       // eslint-disable-next-line eqeqeq
-      if (this.rechargeParams.totalAmt == '') {
-        this.$message.warning('请输入金额')
+      if (this.rechargeParams.amount == '') {
+        this.$message.warning('请输入金额!')
         return
       }
-      const res = await this.$http.post('orderInfo/createOrderInfo', this.rechargeParams)
+      // 调用钱包交易接口服务
+      const res = await axios.post('/api/account/chargeOrder', this.rechargeParams)
       const {
         code,
-        msg,
-        result
+        // eslint-disable-next-line no-unused-vars
+        message,
+        // eslint-disable-next-line no-unused-vars
+        data
       } = res.data
       if (code === '200') {
         // 支付方式跳转
         // eslint-disable-next-line eqeqeq
         if (this.rechargeParams.paymentType == '0') {
           this.$message.success('微信支付')
-          this.wechatPay(result)
+          this.wechatPay(data)
         // eslint-disable-next-line eqeqeq
         } else if (this.rechargeParams.paymentType == '1') {
           this.$message.success('支付宝支付')
@@ -91,25 +103,17 @@ export default {
           }
           const div = document.createElement('div')
           div.id = 'payDiv'
-          div.innerHTML = result
+          div.innerHTML = data
           document.body.appendChild(div)
           document.getElementById('payDiv').getElementsByTagName('form')[0].submit()
-        // eslint-disable-next-line eqeqeq
-        } else if (this.rechargeParams.paymentType == '2') {
-          this.$message.success('余额支付成功')
-          this.$router.push({
-            name: 'order'
-          })
-        } else {
-          this.$message.success('活动支付')
         }
       } else if (code === 401) {
-        this.$message.error(msg)
+        this.$message.error(message)
         this.$router.push({
           name: 'login'
         })
       } else {
-        this.$message.error(msg)
+        this.$message.error(message)
       }
     },
     // 微信支付
