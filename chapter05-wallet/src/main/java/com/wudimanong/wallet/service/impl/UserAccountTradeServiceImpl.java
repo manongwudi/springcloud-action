@@ -1,13 +1,19 @@
 package com.wudimanong.wallet.service.impl;
 
+import com.wudimanong.wallet.client.PaymentClient;
+import com.wudimanong.wallet.client.bo.UnifiedPayBO;
+import com.wudimanong.wallet.client.dto.UnifiedPayDTO;
 import com.wudimanong.wallet.convert.UserBalanceOrderConvert;
 import com.wudimanong.wallet.dao.mapper.UserBalanceOrderDao;
 import com.wudimanong.wallet.dao.model.UserBalanceOrderPO;
 import com.wudimanong.wallet.entity.BusinessCodeEnum;
+import com.wudimanong.wallet.entity.GlobalCodeEnum;
+import com.wudimanong.wallet.entity.ResponseResult;
 import com.wudimanong.wallet.entity.bo.AccountChargeBO;
 import com.wudimanong.wallet.entity.dto.AccountChargeDTO;
 import com.wudimanong.wallet.entity.enums.TradeType;
 import com.wudimanong.wallet.exception.DAOException;
+import com.wudimanong.wallet.exception.ServiceException;
 import com.wudimanong.wallet.service.UserAccountTradeService;
 import com.wudimanong.wallet.utils.DateUtils;
 import com.wudimanong.wallet.utils.IDutils;
@@ -22,6 +28,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserAccountTradeServiceImpl implements UserAccountTradeService {
+
+
+    @Autowired
+    PaymentClient paymentClient;
 
     /**
      * 充值订单Dao层接口
@@ -40,11 +50,20 @@ public class UserAccountTradeServiceImpl implements UserAccountTradeService {
             throw new DAOException(BusinessCodeEnum.BUSI_CHARGE_FAIL_2000.getCode(),
                     BusinessCodeEnum.BUSI_CHARGE_FAIL_2000.getDesc(), e);
         }
-        //调用"第6章支付微服务支付服务接口"
-
+        //***********调用支付微服务支付接口****************
+        //构建支付请求参数
+        UnifiedPayDTO unifiedPayDTO = buildUnifiedPayDTO(accountChargeDTO, userBalanceOrderPO);
+        ResponseResult<UnifiedPayBO> responseResult = paymentClient.unifiedPay(unifiedPayDTO);
+        if (!responseResult.getCode().equals(GlobalCodeEnum.GL_SUCC_0000.getCode())) {
+            //支付失败返回错误码
+            throw new ServiceException(responseResult.getCode(), responseResult.getMessage());
+        }
+        //得到支付返回参数
+        UnifiedPayBO unifiedPayBO = responseResult.getData();
         //返回生成的充值订单信息
         AccountChargeBO accountChargeBO = UserBalanceOrderConvert.INSTANCE
-                .convertUserBalanceOrderBO(userBalanceOrderPO);
+                .convertUserBalanceOrderBO(unifiedPayBO);
+        accountChargeBO.setUserId(accountChargeDTO.getUserId());
         return accountChargeBO;
     }
 
@@ -83,5 +102,40 @@ public class UserAccountTradeServiceImpl implements UserAccountTradeService {
         SnowFlakeIdGenerator idGenerator = new SnowFlakeIdGenerator(IDutils.getWorkId(), 1);
         //以日期yyyyMMddHHmmss+随机ID生成器的方式生成充值订单号
         return DateUtils.getStringByFormat(new Date(), DateUtils.sf3) + idGenerator.nextId();
+    }
+
+    /**
+     * 构建请求支付微服务的统一支付请求参数对象
+     *
+     * @param userBalanceOrderPO
+     * @return
+     */
+    private UnifiedPayDTO buildUnifiedPayDTO(AccountChargeDTO accountChargeDTO, UserBalanceOrderPO userBalanceOrderPO) {
+        UnifiedPayDTO unifiedPayDTO = new UnifiedPayDTO();
+        //支付微服务为接入方分配的应用ID
+        unifiedPayDTO.setAppId("10001");
+        //支付业务订单号
+        unifiedPayDTO.setOrderId(userBalanceOrderPO.getOrderId());
+        //充值交易类型-余额充值
+        unifiedPayDTO.setTradeType("topup");
+        //支付渠道
+        unifiedPayDTO.setChannel(accountChargeDTO.getPaymentType());
+        //具体的支付渠道方式，可根据接入的支付产品设定
+        unifiedPayDTO.setPayType("ALI_PAY_H5");
+        //支付金额
+        unifiedPayDTO.setAmount(accountChargeDTO.getAmount());
+        //支付币种
+        unifiedPayDTO.setCurrency(accountChargeDTO.getCurrency());
+        //商户用户标识
+        unifiedPayDTO.setUserId(String.valueOf(accountChargeDTO.getUserId()));
+        //商品标题，实际情况下根据所购买的商品定义相关内容
+        unifiedPayDTO.setSubject("xiaomi 10 pro");
+        //商品详情
+        unifiedPayDTO.setBody("xiaomi 10 pro testing");
+        //支付结果异步通知地址，根据实际情况填充，这里为假的测试地址
+        unifiedPayDTO.setNotifyUrl("http://www.baidu.com");
+        //支付结果同步返回地址，一般为用户前端页面，根据实际情况填充，这里为假的测试地址
+        unifiedPayDTO.setReturnUrl("http://www.baidu.com");
+        return unifiedPayDTO;
     }
 }

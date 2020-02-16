@@ -29,7 +29,7 @@ public class AccountChargeDTO implements Serializable {
     private String currency;
 
     /**
-     * 支付类型
+     * 支付类型（0-微信支付；1-支付宝支付）
      */
     @EnumValue(intValues = {0, 1})
     private Integer paymentType;

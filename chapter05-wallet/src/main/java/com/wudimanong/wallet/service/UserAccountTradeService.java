@@ -9,7 +9,7 @@ import com.wudimanong.wallet.entity.dto.AccountChargeDTO;
 public interface UserAccountTradeService {
 
     /**
-     * 创建余额充值订单业务层接口方法
+     * 余额充值业务层接口方法
      *
      * @param accountChargeDTO
      * @return

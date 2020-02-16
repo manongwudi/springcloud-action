@@ -1,5 +1,6 @@
 package com.wudimanong.wallet.convert;
 
+import com.wudimanong.wallet.client.bo.UnifiedPayBO;
 import com.wudimanong.wallet.dao.model.UserBalanceOrderPO;
 import com.wudimanong.wallet.entity.bo.AccountChargeBO;
 import com.wudimanong.wallet.entity.dto.AccountChargeDTO;
@@ -26,9 +27,9 @@ public interface UserBalanceOrderConvert {
     /**
      * 充值订单业务层返回数据生成转换方法
      *
-     * @param userBalanceOrderPO
+     * @param unifiedPayBO
      * @return
      */
     @Mappings({})
-    AccountChargeBO convertUserBalanceOrderBO(UserBalanceOrderPO userBalanceOrderPO);
+    AccountChargeBO convertUserBalanceOrderBO(UnifiedPayBO unifiedPayBO);
 }

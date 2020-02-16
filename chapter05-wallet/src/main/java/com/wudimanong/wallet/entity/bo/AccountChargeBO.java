@@ -33,4 +33,9 @@ public class AccountChargeBO implements Serializable {
      * 支付系统唯一流水号(调用支付系统后生成)
      */
     private String tradeNo;
+
+    /**
+     * 前端唤起支付收银台所需的额外信息
+     */
+    private String extraInfo;
 }

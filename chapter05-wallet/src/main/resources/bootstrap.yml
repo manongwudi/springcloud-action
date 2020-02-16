@@ -11,3 +11,8 @@ spring:
         healthCheckPath: /actuator/health
 server:
   port: 9090
+
+#feign配置
+feign:
+  hystrix:
+    enabled: true

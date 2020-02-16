@@ -93,6 +93,18 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>1.3.1.Final</version>
         </dependency>
+
+        <!--引入openfeign组件依赖-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!--引入Hystrix组件-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
