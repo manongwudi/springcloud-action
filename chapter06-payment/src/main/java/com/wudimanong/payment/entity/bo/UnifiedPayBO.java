@@ -12,7 +12,7 @@ public class UnifiedPayBO implements Serializable {
     /**
      * 商户支付订单号
      */
-    private Long orderId;
+    private String orderId;
 
     /**
      * 第三方支付渠道生成预支付订单号

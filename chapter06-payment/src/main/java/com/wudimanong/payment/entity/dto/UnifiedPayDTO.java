@@ -21,7 +21,7 @@ public class UnifiedPayDTO implements Serializable {
      * 接入方支付订单ID，必须在接入方系统唯一（如钱包系统）
      */
     @NotNull(message = "支付订单ID不能为空")
-    private Long orderId;
+    private String orderId;
 
     /**
      * 交易类型，用于标示具体的业务类型，如topup-钱包充值等，可以根据具体业务定义
