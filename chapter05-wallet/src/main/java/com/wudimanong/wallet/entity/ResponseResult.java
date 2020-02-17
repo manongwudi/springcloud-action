@@ -89,4 +89,20 @@ public class ResponseResult<T> implements Serializable {
     public static <T> ResponseResult<T> systemException(GlobalCodeEnum globalCodeEnum) {
         return packageObject(null, globalCodeEnum);
     }
+
+    /**
+     * 远程服务熔断降级结果封装
+     *
+     * @param code
+     * @param message
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseResult<T> serviceException(Integer code, String message) {
+        ResponseResult<T> responseResult = new ResponseResult<>();
+
+        responseResult.setCode(code);
+        responseResult.setMessage(message);
+        return responseResult;
+    }
 }

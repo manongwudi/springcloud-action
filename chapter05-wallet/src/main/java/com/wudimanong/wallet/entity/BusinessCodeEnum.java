@@ -13,7 +13,8 @@ public enum BusinessCodeEnum {
     /**
      * 电子账户交易相关返回码定义（2000开头，根据业务扩展）
      */
-    BUSI_CHARGE_FAIL_2000(2000, "充值失败");
+    BUSI_CHARGE_FAIL_2000(2000, "充值失败"),
+    BUSI_PAY_FAIL_2001(2001, "支付系统故障，请稍后重试");
 
     /**
      * 编码

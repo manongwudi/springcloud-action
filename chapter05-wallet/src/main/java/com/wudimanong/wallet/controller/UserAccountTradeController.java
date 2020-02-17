@@ -2,7 +2,9 @@ package com.wudimanong.wallet.controller;
 
 import com.wudimanong.wallet.entity.ResponseResult;
 import com.wudimanong.wallet.entity.bo.AccountChargeBO;
+import com.wudimanong.wallet.entity.bo.PayNotifyBO;
 import com.wudimanong.wallet.entity.dto.AccountChargeDTO;
+import com.wudimanong.wallet.entity.dto.PayNotifyDTO;
 import com.wudimanong.wallet.service.UserAccountTradeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +37,16 @@ public class UserAccountTradeController {
     @PostMapping("/chargeOrder")
     public ResponseResult<AccountChargeBO> chargeOrder(@RequestBody @Validated AccountChargeDTO accountChargeDTO) {
         return ResponseResult.OK(userAccountTradeServiceImpl.chargeOrder(accountChargeDTO));
+    }
+
+    /**
+     * 支付结果通知接收接口
+     *
+     * @param payNotifyDTO
+     * @return
+     */
+    @PostMapping("/payNotify")
+    public ResponseResult<PayNotifyBO> receivePayNotify(@RequestBody @Validated PayNotifyDTO payNotifyDTO) {
+        return ResponseResult.OK(userAccountTradeServiceImpl.receivePayNotify(payNotifyDTO));
     }
 }

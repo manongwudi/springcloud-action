@@ -10,16 +10,23 @@ import com.wudimanong.wallet.entity.BusinessCodeEnum;
 import com.wudimanong.wallet.entity.GlobalCodeEnum;
 import com.wudimanong.wallet.entity.ResponseResult;
 import com.wudimanong.wallet.entity.bo.AccountChargeBO;
+import com.wudimanong.wallet.entity.bo.AddBalanceBO;
+import com.wudimanong.wallet.entity.bo.PayNotifyBO;
 import com.wudimanong.wallet.entity.dto.AccountChargeDTO;
+import com.wudimanong.wallet.entity.dto.PayNotifyDTO;
 import com.wudimanong.wallet.entity.enums.TradeType;
 import com.wudimanong.wallet.exception.DAOException;
 import com.wudimanong.wallet.exception.ServiceException;
 import com.wudimanong.wallet.service.UserAccountTradeService;
+import com.wudimanong.wallet.service.UserBalanceService;
 import com.wudimanong.wallet.utils.DateUtils;
 import com.wudimanong.wallet.utils.IDutils;
 import com.wudimanong.wallet.utils.SnowFlakeIdGenerator;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +72,50 @@ public class UserAccountTradeServiceImpl implements UserAccountTradeService {
                 .convertUserBalanceOrderBO(unifiedPayBO);
         accountChargeBO.setUserId(accountChargeDTO.getUserId());
         return accountChargeBO;
+    }
+
+    /**
+     * 用户账户余额服务层接口依赖
+     */
+    @Autowired
+    UserBalanceService userBalanceServiceImpl;
+
+    /**
+     * 支付回调逻辑业务层实现方法
+     *
+     * @param payNotifyDTO
+     * @return
+     */
+    @Override
+    public PayNotifyBO receivePayNotify(PayNotifyDTO payNotifyDTO) {
+        //查询充值订单判断支付状态是否成功
+        Map parmMap = new HashMap<>();
+        parmMap.put("order_id", payNotifyDTO.getOrderId());
+        List<UserBalanceOrderPO> userBalanceOrderPOList = userBalanceOrderDao.selectByMap(parmMap);
+        //充值订单不存在,返回失败结果
+        if (userBalanceOrderPOList == null && userBalanceOrderPOList.size() <= 0) {
+            return PayNotifyBO.builder().result("fail").build();
+        }
+        UserBalanceOrderPO userBalanceOrderPO = userBalanceOrderPOList.get(0);
+        //这里判断充值订单支付状态，如果已经为成功状态，则说明处理过，无需额外处理，返回成功结果
+        if ("2".equals(userBalanceOrderPO.getStatus())) {
+            return PayNotifyBO.builder().result("success").build();
+        }
+        //更新充值订单支付状态为成功
+        userBalanceOrderPO.setStatus(String.valueOf(payNotifyDTO.getPayStatus()));
+        //设置订单更新时间
+        userBalanceOrderPO.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        //更新状态
+        userBalanceOrderDao.updateById(userBalanceOrderPO);
+        //如为支付结果成功回调通知，则需要完成用户账户余额的增加
+        if (payNotifyDTO.getPayStatus() == 2) {
+            AddBalanceBO addBalanceBO = AddBalanceBO.builder().userId(userBalanceOrderPO.getUserId())
+                    .amount(userBalanceOrderPO.getAmount()).busiType("charge").accType("0")
+                    .currency(userBalanceOrderPO.getCurrency()).build();
+            //调用账户余额业务层方法，增加余额
+            userBalanceServiceImpl.addBalance(addBalanceBO);
+        }
+        return PayNotifyBO.builder().result("success").build();
     }
 
     /**

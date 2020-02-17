@@ -44,7 +44,7 @@ create table user_balance_flow
 (
   id            bigint not null primary key auto_increment,
   user_id       varchar(60) comment '业务方用户id',
-  flow_no       varchar(32) comment '账户流水号,与业务方发起的流水号映射',
+  flow_no       varchar(64) comment '账户流水号,与业务方发起的流水号映射',
   acc_no        varchar(60) comment '账户唯一标示',
   busi_type     varchar(10) comment '余额流水业务类型,0-订单结费；1-购买月卡',
   amount        bigint comment '变动金额，以分为单位，区分正负；如：+10，-10',
