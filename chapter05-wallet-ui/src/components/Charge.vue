@@ -47,11 +47,10 @@ export default {
       // 充值交易参数
       rechargeParams: {
         // eslint-disable-next-line no-undef
-        // 获取用户ID
-        'userId': this.$route.query.userId,
+        'userId': this.$route.query.userId, // 获取用户ID
         'amount': '', // 金额
         'currency': 'CNY', // 币种
-        'paymentType': '0', // 支付方式[0:微信,1:支付宝]
+        'paymentType': '1', // 支付方式[0:微信,1:支付宝]，暂支持支付宝
         'isRenew': '0' // 是否自动续费[0:否,1:是]
       }
     }
@@ -88,14 +87,14 @@ export default {
         // eslint-disable-next-line no-unused-vars
         data
       } = res.data
-      if (code === '200') {
+      if (code === 0) {
         // 支付方式跳转
         // eslint-disable-next-line eqeqeq
-        if (this.rechargeParams.paymentType == '0') {
+        if (this.rechargeParams.paymentType == '0') { // 暂时不支持微信
           this.$message.success('微信支付')
           this.wechatPay(data)
         // eslint-disable-next-line eqeqeq
-        } else if (this.rechargeParams.paymentType == '1') {
+        } else if (this.rechargeParams.paymentType == '1') { // 支持支付宝电脑网页支付
           this.$message.success('支付宝支付')
           const payDiv = document.getElementById('payDiv')
           if (payDiv) {
@@ -103,7 +102,7 @@ export default {
           }
           const div = document.createElement('div')
           div.id = 'payDiv'
-          div.innerHTML = data
+          div.innerHTML = data.extraInfo // 返回的form表单数据
           document.body.appendChild(div)
           document.getElementById('payDiv').getElementsByTagName('form')[0].submit()
         }
@@ -116,7 +115,7 @@ export default {
         this.$message.error(message)
       }
     },
-    // 微信支付
+    // 微信支付(暂不支持)
     wechatPay (result) {
       if (result) {
         const orderParams = JSON.parse(result)
