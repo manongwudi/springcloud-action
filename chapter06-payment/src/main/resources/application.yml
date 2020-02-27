@@ -7,6 +7,12 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     separator: //
 
+  #redis服务地址
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+
 #支付宝渠道参数配置
 channel:
   alipay:
