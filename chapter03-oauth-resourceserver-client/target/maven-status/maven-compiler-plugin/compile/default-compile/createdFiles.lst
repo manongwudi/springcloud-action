@@ -1,0 +1,10 @@
+com/wudimanong/oauth/entity/model/OauthModuleResources.class
+com/wudimanong/oauth/feign/OauthResourceClientFallbackFactory$1.class
+com/wudimanong/oauth/entity/model/OauthUser.class
+com/wudimanong/oauth/entity/model/OauthRole.class
+com/wudimanong/oauth/entity/model/OauthClientDetails.class
+com/wudimanong/oauth/feign/OauthResourceClient.class
+com/wudimanong/oauth/entity/enums/ResponseCode.class
+com/wudimanong/oauth/feign/OauthResourceClientFallbackFactory.class
+com/wudimanong/oauth/entity/ResponseData.class
+com/wudimanong/oauth/feign/OauthResourceClientConfiguration.class
