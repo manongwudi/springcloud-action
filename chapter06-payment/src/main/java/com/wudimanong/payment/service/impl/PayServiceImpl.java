@@ -1,5 +1,6 @@
 package com.wudimanong.payment.service.impl;
 
+import com.wudimanong.payment.convert.UnifiedPayConvert;
 import com.wudimanong.payment.dao.mapper.PayOrderDao;
 import com.wudimanong.payment.dao.model.PayOrderPO;
 import com.wudimanong.payment.entity.BusinessCodeEnum;
@@ -9,9 +10,13 @@ import com.wudimanong.payment.exception.ServiceException;
 import com.wudimanong.payment.service.PayChannelService;
 import com.wudimanong.payment.service.PayChannelServiceFactory;
 import com.wudimanong.payment.service.PayService;
+import com.wudimanong.payment.utils.DateUtils;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
@@ -57,32 +62,35 @@ public class PayServiceImpl implements PayService {
         //创建Redis分布式锁
         //支付防并发安全逻辑-通过前缀+接入方业务订单号获取Redis分布式锁（同一笔订单，同一时刻只允许一个线程处理）
         Lock lock = redisLockRegistry.obtain(redisLockPrefix + unifiedPayDTO.getOrderId());
+        //持有锁，等待时间为1秒
+        boolean isLock = false;
         try {
-            //持有锁，等待时间为1秒
-            boolean isLock = lock.tryLock(1, TimeUnit.SECONDS);
-            if (isLock) {
-                //数据库级别订单状态防重判断
-                boolean isRepeatPayOrder = isSuccessPayOrder(unifiedPayDTO);
-                if (isRepeatPayOrder) {
-                    throw new ServiceException(BusinessCodeEnum.BUSI_PAY_FAIL_1000.getCode(),
-                            BusinessCodeEnum.BUSI_PAY_FAIL_1000.getDesc());
-                }
-                //todo 支付订单入库
-                //获取具体的支付渠道服务
-                PayChannelService payChannelService = payChannelServiceFactory
-                        .createPayChannelService(unifiedPayDTO.getChannel());
-                //调用渠道支付方法
-                unifiedPayBO = payChannelService.pay(unifiedPayDTO);
-            } else {
-                //持有锁超时，则说明请求正在被处理，提示用户稍后重试
-                throw new ServiceException(BusinessCodeEnum.BUSI_PAY_FAIL_1001.getCode(),
-                        BusinessCodeEnum.BUSI_PAY_FAIL_1001.getDesc());
-            }
+            isLock = lock.tryLock(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
+        }
+        if (isLock) {
+            //数据库级别订单状态防重判断
+            boolean isRepeatPayOrder = isSuccessPayOrder(unifiedPayDTO);
+            if (isRepeatPayOrder) {
+                throw new ServiceException(BusinessCodeEnum.BUSI_PAY_FAIL_1000.getCode(),
+                        BusinessCodeEnum.BUSI_PAY_FAIL_1000.getDesc());
+            }
+            //支付订单入库
+            String payId = this.payOrderSave(unifiedPayDTO);
+            //获取具体的支付渠道服务
+            PayChannelService payChannelService = payChannelServiceFactory
+                    .createPayChannelService(unifiedPayDTO.getChannel());
+            //调用渠道支付方法,第三方交互订单使用支付平台流水
+            unifiedPayDTO.setOrderId(payId);
+            unifiedPayBO = payChannelService.pay(unifiedPayDTO);
+
             //释放分布式锁
             lock.unlock();
+        } else {
+            //持有锁超时，则说明请求正在被处理，提示用户稍后重试
+            throw new ServiceException(BusinessCodeEnum.BUSI_PAY_FAIL_1001.getCode(),
+                    BusinessCodeEnum.BUSI_PAY_FAIL_1001.getDesc());
         }
         return unifiedPayBO;
     }
@@ -106,5 +114,41 @@ public class PayServiceImpl implements PayService {
             }
         }
         return false;
+    }
+
+    /**
+     * 支付订单入库方法
+     *
+     * @param unifiedPayDTO
+     * @return
+     */
+    private String payOrderSave(UnifiedPayDTO unifiedPayDTO) {
+        //MapStruct工具进行实体对象类型转换
+        PayOrderPO payOrderPO = UnifiedPayConvert.INSTANCE.convertPayOrderPO(unifiedPayDTO);
+        //设置支付状态为"待支付"
+        payOrderPO.setStatus("0");
+        //生成支付平台流水号
+        String payId = createPayId();
+        payOrderPO.setPayId(payId);
+        //订单创建时间
+        payOrderPO.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        //订单更新时间
+        payOrderPO.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        //订单入库操作
+        payOrderDao.insert(payOrderPO);
+        return payOrderPO.getPayId();
+    }
+
+    /**
+     * 生成支付平台订单号
+     *
+     * @return
+     */
+    private String createPayId() {
+        //获取10000～99999随机数
+        Integer random = new Random().nextInt(99999) % (99999 - 10000 + 1) + 10000;
+        //时间戳+随机数
+        String payId = DateUtils.getStringByFormat(new Date(), DateUtils.sf3) + String.valueOf(random);
+        return payId;
     }
 }

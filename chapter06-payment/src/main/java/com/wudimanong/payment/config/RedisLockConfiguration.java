@@ -13,6 +13,6 @@ public class RedisLockConfiguration {
 
     @Bean
     public RedisLockRegistry redisLockRegistry(RedisConnectionFactory redisConnectionFactory) {
-        return new RedisLockRegistry(redisConnectionFactory, "spring-cloud");
+        return new RedisLockRegistry(redisConnectionFactory, "payment");
     }
 }
