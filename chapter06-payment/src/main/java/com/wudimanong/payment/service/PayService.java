@@ -15,5 +15,4 @@ public interface PayService {
      * @return
      */
     UnifiedPayBO unifiedPay(UnifiedPayDTO unifiedPayDTO);
-
 }
