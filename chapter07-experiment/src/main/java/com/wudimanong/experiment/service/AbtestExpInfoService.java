@@ -1,6 +1,6 @@
 package com.wudimanong.experiment.service;
 
-import com.wudimanong.experiment.dao.model.AbtestExpInfoPO;
+import com.wudimanong.experiment.client.entity.bo.ConfigBO;
 
 /**
  * @author jiangqiao
@@ -13,6 +13,6 @@ public interface AbtestExpInfoService {
      * @param factorTag
      * @return
      */
-    AbtestExpInfoPO getExpInfoByFactorTag(String factorTag);
+    ConfigBO getExpInfoByFactorTag(String factorTag);
 
 }

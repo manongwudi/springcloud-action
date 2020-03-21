@@ -20,7 +20,7 @@ public class CaffeineTestService {
     AbtestExpInfoDao abtestExpInfoDao;
 
     //以参数factorTag为Key进行缓存，
-    @Cacheable(value = "EXP_INFO", key = "#factorTag", sync = true)
+    @Cacheable(value = "CAFFEINE_TEST", key = "#factorTag", sync = true)
     public AbtestExpInfoPO getExpInfoByFactorTag(String factorTag) {
         //封装查询参数
         AbtestExpInfoPO abtestExpInfoPO = new AbtestExpInfoPO();

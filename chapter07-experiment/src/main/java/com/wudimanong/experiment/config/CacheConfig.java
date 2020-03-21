@@ -23,45 +23,60 @@ public class CacheConfig {
      * 缓存默认大小
      */
     public static final int DEFAULT_MAXSIZE = 50000;
+
     /**
-     * 缓存默认过期时间
+     * 缓存默认过期时间(单位：秒)
      */
-    public static final int DEFAULT_TTL = 10;
+    public static final int DEFAULT_EXPIRE_TIME = 10;
 
     /**
      * 定义多种cache名称、超时时长（秒）、最大容量;需要修改可以在构造方法的参数中指定。
      */
     public enum Caches {
-        //实验信息，缓存有效期5秒
-        EXP_INFO(5),
-        //分层信息,缓存有效期30分钟
-        LAYER_INFO(1800, 1000),
-        ;
+        //Caffeine缓存效果测试，缓存有效期5秒
+        CAFFEINE_TEST(5, DEFAULT_MAXSIZE),
+
+        //实验配置信息缓存，缓存有效期60秒
+        EXP_CONFIG_INFO(60, DEFAULT_MAXSIZE);
 
         /**
          * 最大數量
          */
         private int maxSize = DEFAULT_MAXSIZE;
+
         /**
          * 过期时间（秒）
          */
-        private int ttl = DEFAULT_TTL;
+        private int expireTime = DEFAULT_EXPIRE_TIME;
 
-        Caches(int ttl) {
-            this.ttl = ttl;
-        }
 
-        Caches(int ttl, int maxSize) {
-            this.ttl = ttl;
+        /**
+         * 缓存构造方法
+         *
+         * @param expireTime
+         * @param maxSize
+         */
+        Caches(int expireTime, int maxSize) {
+            this.expireTime = expireTime;
             this.maxSize = maxSize;
         }
 
-        public int getMaxSize() {
-            return maxSize;
+        /**
+         * 获取过期时间
+         *
+         * @return
+         */
+        int getExpireTime() {
+            return this.expireTime;
         }
 
-        public int getTtl() {
-            return ttl;
+        /**
+         * 获取缓存大小
+         *
+         * @return
+         */
+        int getMaxSize() {
+            return this.maxSize;
         }
     }
 
@@ -80,7 +95,7 @@ public class CacheConfig {
             caches.add(new CaffeineCache(c.name(),
                     Caffeine.newBuilder().recordStats()
                             //在最后一次写入缓存后开始计时，在指定的时间后过期
-                            .expireAfterWrite(c.getTtl(), TimeUnit.SECONDS)
+                            .expireAfterWrite(c.getExpireTime(), TimeUnit.SECONDS)
                             //缓存最大容量大小
                             .maximumSize(c.getMaxSize())
                             .build())

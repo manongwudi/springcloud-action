@@ -1,9 +1,15 @@
 package com.wudimanong.experiment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wudimanong.experiment.client.entity.bo.ConfigBO;
+import com.wudimanong.experiment.convert.AbtestExpConvert;
 import com.wudimanong.experiment.dao.mapper.AbtestExpInfoDao;
+import com.wudimanong.experiment.dao.mapper.AbtestGroupDao;
 import com.wudimanong.experiment.dao.model.AbtestExpInfoPO;
+import com.wudimanong.experiment.dao.model.AbtestGroupPO;
 import com.wudimanong.experiment.service.AbtestExpInfoService;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -11,6 +17,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author jiangqiao
  */
+@Slf4j
 @Service
 public class AbtestExpInfoServiceImpl implements AbtestExpInfoService {
 
@@ -20,16 +27,34 @@ public class AbtestExpInfoServiceImpl implements AbtestExpInfoService {
     @Autowired
     AbtestExpInfoDao abtestExpInfoDao;
 
+    /**
+     * 实验分组信息
+     */
+    @Autowired
+    AbtestGroupDao abtestGroupDao;
+
+    /**
+     * 根据业务系统标识，获取实验配置信息信息（以参数factorTag为Key使用Caffeine进行缓存）
+     */
     @Override
-    //以参数factorTag为Key进行缓存，
-    @Cacheable(value = "EXP_INFO", key = "#factorTag", sync = true)
-    public AbtestExpInfoPO getExpInfoByFactorTag(String factorTag) {
-        //封装查询参数
+    @Cacheable(value = "EXP_CONFIG_INFO", key = "#factorTag")
+    public ConfigBO getExpInfoByFactorTag(String factorTag) {
+        //根据业务系统参数查询实验基本信息
         AbtestExpInfoPO abtestExpInfoPO = new AbtestExpInfoPO();
         abtestExpInfoPO.setFactorTag(factorTag);
         QueryWrapper<AbtestExpInfoPO> queryWrapper = new QueryWrapper<>(abtestExpInfoPO);
-        //数据库查询实验配置信息
         abtestExpInfoPO = abtestExpInfoDao.selectOne(queryWrapper);
-        return abtestExpInfoPO;
+        //实验信息不存在则返回空配置
+        if (abtestExpInfoPO == null) {
+            return null;
+        }
+        //根据实验ID查询分组列表信息
+        AbtestGroupPO abtestGroupPO = new AbtestGroupPO();
+        abtestGroupPO.setExpId(abtestGroupPO.getId());
+        QueryWrapper<AbtestGroupPO> groupQueryWrapper = new QueryWrapper<>(abtestGroupPO);
+        List<AbtestGroupPO> groupPOList = abtestGroupDao.selectList(groupQueryWrapper);
+        //转换构建返实验配置返回参数信息
+        ConfigBO configBO = AbtestExpConvert.INSTANCE.convertConfig(abtestExpInfoPO, groupPOList);
+        return configBO;
     }
 }
