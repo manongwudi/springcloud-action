@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "element-ui": "^2.13.0",
+    "element-ui": "^2.13.1",
     "fibers": "^4.0.2",
     "node-sass": "^4.13.1",
     "sass": "^1.26.3",
