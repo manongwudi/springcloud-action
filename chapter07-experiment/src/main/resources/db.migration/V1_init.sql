@@ -34,8 +34,8 @@ alter table abtest_exp_info add index idx_partition_type_deleted_status(partitio
 #实验分层表
 create table abtest_layer (
   id int(11) unsigned not null auto_increment comment '分层id',
-  name varchar(255) collate utf8_bin not null comment '名称',
-  desc varchar(255) collate utf8_bin not null default '' comment '分层描述',
+  `name` varchar(255) collate utf8_bin not null comment '名称',
+  `desc` varchar(255) collate utf8_bin not null default '' comment '分层描述',
   group_field_id int(11) not null comment '分组字段(参数)类型，1 用户，2 地理位置',
   bucket_total_num int(11) not null comment '当前层的分桶总数',
   unused_bucket_nos text collate utf8_bin not null comment '未使用的分桶编号列表',
@@ -75,12 +75,12 @@ alter table abtest_group add index idx_expid_online(exp_id,online);
 #实验指标表
 create table abtest_metric (
    id int(11) not null auto_increment comment '指标id',
-   name varchar(100) collate utf8_bin default null comment '中文名',
+   `name` varchar(100) collate utf8_bin default null comment '中文名',
    name_en varchar(100) collate utf8_bin default null comment '英文名',
    formula varchar(255) collate utf8_bin default null comment '指标计算公式',
    group_field_id int(11) not null comment '分组因子id; 0-所有分组因子都具有的指标',
-   desc varchar(255) collate utf8_bin not null comment '指标描述',
-   status tinyint(2) not null default '1' comment '是否可用；0-否，1-是',
+   `desc` varchar(255) collate utf8_bin not null comment '指标描述',
+   `status` tinyint(2) not null default '1' comment '是否可用；0-否，1-是',
    create_time datetime not null default current_timestamp comment '创建时间',
    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
    primary key (id)

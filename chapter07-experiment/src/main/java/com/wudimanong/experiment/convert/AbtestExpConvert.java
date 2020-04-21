@@ -1,6 +1,7 @@
 package com.wudimanong.experiment.convert;
 
 import com.wudimanong.experiment.client.entity.AbtestExp;
+import com.wudimanong.experiment.client.entity.AbtestExpInfo;
 import com.wudimanong.experiment.client.entity.bo.ConfigBO;
 import com.wudimanong.experiment.dao.model.AbtestExpInfoPO;
 import com.wudimanong.experiment.dao.model.AbtestGroupPO;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.CollectionUtils;
 
@@ -19,6 +21,15 @@ import org.springframework.util.CollectionUtils;
 public interface AbtestExpConvert {
 
     AbtestExpConvert INSTANCE = Mappers.getMapper(AbtestExpConvert.class);
+
+    /**
+     * 实验持久层信息列表转换为服务层输出数据对象
+     *
+     * @param abtestExpInfoPOList
+     * @return
+     */
+    @Mappings({})
+    List<AbtestExpInfo> convertAbtestInfo(List<AbtestExpInfoPO> abtestExpInfoPOList);
 
     /**
      * 更加实验及分组信息转换SDK配置获取输出
