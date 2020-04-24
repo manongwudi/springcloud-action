@@ -1,8 +1,9 @@
 package com.wudimanong.experiment.service;
 
+import com.wudimanong.experiment.client.entity.bo.CreateExpBO;
 import com.wudimanong.experiment.client.entity.bo.GetExpInfosBO;
+import com.wudimanong.experiment.client.entity.dto.CreateExpDTO;
 import com.wudimanong.experiment.client.entity.dto.GetExpInfosDTO;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * @author jiangqiao
@@ -15,6 +16,13 @@ public interface AbtestExpService {
      * @param getExpInfosDTO
      * @return
      */
-    GetExpInfosBO getExpInfos(@Validated GetExpInfosDTO getExpInfosDTO);
+    GetExpInfosBO getExpInfos(GetExpInfosDTO getExpInfosDTO);
 
+    /**
+     * 创建实验
+     *
+     * @param createExpDTO
+     * @return
+     */
+    CreateExpBO createExp(CreateExpDTO createExpDTO);
 }

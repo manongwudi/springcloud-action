@@ -8,8 +8,14 @@ public enum BusinessCodeEnum {
     /**
      * 登录用户权限相关错误码（1000开头，根据业务扩展 ...）
      */
-    BUSI_LOGIN_FAIL_1000(1000, "用户密码错误");
+    BUSI_LOGIN_FAIL_1000(1000, "用户密码错误"),
 
+    /**
+     * 实验业务逻辑相关错误码（2000开头）
+     */
+    BUSI_LOGICAL_FAIL_2000(2000, "factor已存在实验"),
+    BUSI_LOGICAL_LAYER_IS_NOT_EXIST(2001, "分层信息不存在"),
+    BUSI_LOGICAL_OVER_AVAILABLE_FLOW(2002, "超出可用流量");
 
     /**
      * 编码

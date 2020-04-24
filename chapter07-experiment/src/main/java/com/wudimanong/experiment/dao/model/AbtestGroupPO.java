@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.Data;
 
 /**
@@ -56,7 +55,7 @@ public class AbtestGroupPO {
     /**
      * 分流内包含的桶编号列表
      */
-    private String groupPartitionDetails;
+    private List<Integer> groupPartitionDetails;
 
     /**
      * 策略对应JSON
@@ -97,9 +96,7 @@ public class AbtestGroupPO {
      */
     public static AbtestGroup mapGroup(AbtestGroupPO abtestGroupPO) {
         //分流内包含的桶编号列表
-        List<Integer> partitionSerialNums = Arrays.asList(abtestGroupPO.getGroupPartitionDetails().split(",")).stream()
-                .map(o -> Integer.valueOf(o)).collect(
-                        Collectors.toList());
+        List<Integer> partitionSerialNums = abtestGroupPO.getGroupPartitionDetails();
         //判断桶数量大小是否>100，以此决定传输时是否启用压缩
         boolean useBase64Nums = partitionSerialNums.size() > 100;
         AbtestGroup group = new AbtestGroup();
