@@ -1,10 +1,10 @@
 package com.wudimanong.experiment.dao.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.sql.Timestamp;
-import java.util.List;
 import lombok.Data;
 
 /**
@@ -28,6 +28,7 @@ public class AbtestLayerPO {
     /**
      * 分层描述
      */
+    @TableField(value = "`desc`")
     private String desc;
 
     /**
@@ -43,7 +44,7 @@ public class AbtestLayerPO {
     /**
      * 未被使用的分桶编号列表
      */
-    private List<Integer> unusedBucketNos;
+    private String unusedBucketNos;
 
     /**
      * 分区类型（功能待扩展字段）

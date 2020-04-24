@@ -143,6 +143,8 @@
                     <include>**/application*.yaml</include>
                     <include>**/bootstrap.yml</include>
                     <include>**/bootstrap.yaml</include>
+                    <!--针对Mybatis映射文件-->
+                    <include>**/*.xml</include>
                 </includes>
             </resource>
         </resources>

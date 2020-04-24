@@ -18,17 +18,19 @@ import com.wudimanong.experiment.dao.model.AbtestGroupPO;
 import com.wudimanong.experiment.dao.model.AbtestLayerPO;
 import com.wudimanong.experiment.exception.ServiceException;
 import com.wudimanong.experiment.service.AbtestExpService;
-import com.wudimanong.experiment.utils.BucketAllocate;
+import com.wudimanong.experiment.utils.BucketAllocate.Request;
+import com.wudimanong.experiment.utils.BucketAllocate.Result;
 import com.wudimanong.experiment.utils.BucketUtils;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -170,7 +172,7 @@ public class AbtestExpServiceImpl implements AbtestExpService {
     private AbtestLayerPO createAbtestLayer(CreateExpDTO createExpDTO) {
         AbtestLayerPO abtestLayerPO = new AbtestLayerPO();
         //设置名称描述信息
-        abtestLayerPO.setName(createExpDTO.getDesc());
+        abtestLayerPO.setName(createExpDTO.getFactorTag());
         abtestLayerPO.setDesc(createExpDTO.getDesc());
         //设置流量分组类型ID
         abtestLayerPO.setGroupFieldId(createExpDTO.getGroupField());
@@ -178,9 +180,9 @@ public class AbtestExpServiceImpl implements AbtestExpService {
         //设置每个分层的默认分桶总数
         abtestLayerPO.setBucketTotalNum(BucketUtils.BUCKET_TOTAL_NUM);
         //通过工具方法实现流量分桶号初始化
-        abtestLayerPO.setUnusedBucketNos(
-                BucketUtils.getShuffledBucketNoList().stream()
-                        .collect(Collectors.toCollection(ArrayList<Integer>::new)));
+        abtestLayerPO
+                .setUnusedBucketNos(StringUtils.join(BucketUtils.getShuffledBucketNoList().stream().toArray(), ","));
+        abtestLayerPO.setIsDelete(0);
         return abtestLayerPO;
     }
 
@@ -203,22 +205,26 @@ public class AbtestExpServiceImpl implements AbtestExpService {
         //默认设置抽样率为5
         abtestExpInfoPO.setSamplingRatio(5);
         //todo 设置默认配置信息
+        abtestExpInfoPO.setMetricIds("");
         abtestExpInfoPO.setOwner(createExpDTO.getOwner());
         abtestExpInfoPO.setServiceName(createExpDTO.getAppName());
         //默认设置为已发布状态
         abtestExpInfoPO.setStatus(1);
+        abtestExpInfoPO.setIsDelete(0);
+        //设置为未上线
+        abtestExpInfoPO.setOnline(0);
         return abtestExpInfoPO;
     }
 
     /**
      * 实验组初始流量分配占比
      */
-    public static final Integer testGroupInitFlowRatio = 0;
+    public static final Integer testGroupInitFlowRatio = 50;
 
     /**
      * 对照组初始流量分配占比
      */
-    public static final Integer controlGroupInitFlowRatio = 0;
+    public static final Integer controlGroupInitFlowRatio = 50;
 
     /**
      * 生成实验分组信息持久层列表对象方法
@@ -239,9 +245,11 @@ public class AbtestExpServiceImpl implements AbtestExpService {
         //分组类型为0-表示实验组
         testGroup.setGroupType(0);
         //设置默认分流内包含的分桶编号
-        testGroup.setGroupPartitionDetails(new ArrayList<>());
+        testGroup.setGroupPartitionDetails("");
         //设置策略明细
         testGroup.setStrategyDetail("");
+        testGroup.setOnline(abtestExpInfoPO.getOnline());
+        testGroup.setDilutionRatio(0);
         groupInfos.add(testGroup);
 
         //生成对照组
@@ -254,9 +262,11 @@ public class AbtestExpServiceImpl implements AbtestExpService {
         //分组类型为1-表示对照组
         controlGroup.setGroupType(1);
         //设置默认分流内包含的分桶编号
-        controlGroup.setGroupPartitionDetails(new ArrayList<>());
+        controlGroup.setGroupPartitionDetails("");
         //设置策略明细
         controlGroup.setStrategyDetail("");
+        controlGroup.setOnline(abtestExpInfoPO.getOnline());
+        controlGroup.setDilutionRatio(0);
         groupInfos.add(0, controlGroup);
         return groupInfos;
     }
@@ -277,36 +287,49 @@ public class AbtestExpServiceImpl implements AbtestExpService {
             groupList.stream().filter(group -> flowRatioMap.containsKey(group.getId())).sorted(
                     Comparator.comparing(group -> flowRatioMap.get(group.getId()) - group.getFlowRatio()))
                     .map(group -> (Function<List<Integer>, List<Integer>>) unused -> {
-                        BucketAllocate.Request bucketRequest = new BucketAllocate.Request();
-                        bucketRequest.setCurrBucketRatio(group.getFlowRatio());
-                        bucketRequest.setDestBucketRatio(flowRatioMap.get(group.getId()));
-                        bucketRequest.setCurrUnusedBucketNoListOfLayer(unused);
-                        bucketRequest.setCurrUsedBucketNoListOfGroup(group.getGroupPartitionDetails());
-                        BucketAllocate.Result bucketResult = null;
+                        Result bucketResult = null;
                         try {
+                            Request bucketRequest = new Request();
+                            bucketRequest.setCurrBucketRatio(group.getFlowRatio());
+                            bucketRequest.setDestBucketRatio(flowRatioMap.get(group.getId()));
+                            bucketRequest.setCurrUnusedBucketNoListOfLayer(unused);
+                            //转换String分桶数据为List<Integer>
+                            List<Integer> currUsedBucketNoListOfGroup = (group.getGroupPartitionDetails() != null && !""
+                                    .equals(group.getGroupPartitionDetails())) ? Arrays
+                                    .asList(group.getGroupPartitionDetails()
+                                            .split(",")).stream().map(o -> Integer.valueOf(o))
+                                    .collect(Collectors.toList()) : new ArrayList<>();
+                            bucketRequest.setCurrUsedBucketNoListOfGroup(currUsedBucketNoListOfGroup);
+                            //执行重新分桶洗牌逻辑
                             bucketResult = BucketUtils.bucketReallocate(bucketRequest);
+                            //设置已分配好的分桶编号
+                            group.setGroupPartitionDetails(
+                                    StringUtils.join(bucketResult.getBucketNoListOfGroup(), ","));
+                            //更新当前时间
+                            group.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+                            abtestGroupDao.updateById(group);
+                            //向上返回分层中，当前未分配的分桶编号
                         } catch (Exception e) {
-                            throw new ServiceException(null, null);
+                            throw new ServiceException(BusinessCodeEnum.BUSI_LOGICAL_OVER_AVAILABLE_FLOW.getCode(),
+                                    BusinessCodeEnum.BUSI_LOGICAL_OVER_AVAILABLE_FLOW.getDesc(), e);
                         }
-                        //设置已分配好的分桶编号
-                        group.setGroupPartitionDetails(bucketResult.getBucketNoListOfGroup());
-                        //更新当前时间
-                        group.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-                        abtestGroupDao.updateById(group);
-                        //向上返回分层中，当前未分配的分桶编号
                         return bucketResult.getUnusedBucketNoListOfLayer();
-                    })
-                    .reduce(Function::andThen)
+                    }).reduce(Function::andThen)
                     .ifPresent(func -> {
                         //更新分层信息中的未使用分桶编号信息
-                        List<Integer> unused = func.apply(layer.getUnusedBucketNos());
+                        List<Integer> layerUnusedBucketNos = Arrays
+                                .asList(layer.getUnusedBucketNos().split(","))
+                                .stream()
+                                .map(o -> Integer.valueOf(o)).collect(
+                                        Collectors.toList());
+                        String unused = StringUtils.join(func.apply(layerUnusedBucketNos).toArray(), ",");
                         layer.setUnusedBucketNos(unused);
                         layer.setUpdateTime(new Timestamp(System.currentTimeMillis()));
                         abtestLayerDao.updateById(layer);
                     });
         } catch (Exception e) {
             throw new ServiceException(BusinessCodeEnum.BUSI_LOGICAL_OVER_AVAILABLE_FLOW.getCode(),
-                    BusinessCodeEnum.BUSI_LOGICAL_OVER_AVAILABLE_FLOW.getDesc());
+                    BusinessCodeEnum.BUSI_LOGICAL_OVER_AVAILABLE_FLOW.getDesc(), e);
         }
     }
 }
