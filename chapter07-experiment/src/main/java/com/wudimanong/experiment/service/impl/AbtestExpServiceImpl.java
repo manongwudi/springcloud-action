@@ -43,11 +43,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AbtestExpServiceImpl implements AbtestExpService {
 
     /**
-     * 默认初始流量占比
-     */
-    public static final Integer defaultGroupInitFlowRatio = 50;
-
-    /**
      * 依赖注入实验信息表持久层依赖
      */
     @Autowired
@@ -222,11 +217,17 @@ public class AbtestExpServiceImpl implements AbtestExpService {
     }
 
     /**
+     * 默认初始流量占比
+     */
+    public static final Integer defaultGroupInitFlowRatio = 50;
+
+    /**
      * 生成实验分组信息持久层列表对象方法
      *
      * @param abtestExpInfoPO
      * @return
      */
+
     private List<AbtestGroupPO> createAbtestGroupList(AbtestExpInfoPO abtestExpInfoPO) {
         //生成流量分组信息
         List<AbtestGroupPO> groupInfos = new ArrayList<>();
