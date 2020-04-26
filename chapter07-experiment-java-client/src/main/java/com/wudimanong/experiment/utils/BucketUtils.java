@@ -21,6 +21,13 @@ public class BucketUtils {
      */
     private static final List<Integer> ORIGINAL_BUCKET_NOS = new LinkedList<>();
 
+    // 初始化原始分桶编号
+    static {
+        for (int index = 0; index < BUCKET_TOTAL_NUM; index++) {
+            ORIGINAL_BUCKET_NOS.add(index);
+        }
+    }
+
     /**
      * 洗牌，获取bucket的分桶编号
      *

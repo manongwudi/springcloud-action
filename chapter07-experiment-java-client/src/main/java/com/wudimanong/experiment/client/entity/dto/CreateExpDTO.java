@@ -21,7 +21,7 @@ public class CreateExpDTO {
      * 实验业务标签
      */
     @NotNull(message = "实验业务标签不能为空")
-    @Pattern(regexp = "^[A-Za-z]\\w{4,34}_[0-9]{4}$", message = "实验标签不符合规范")
+    @Pattern(regexp = "[A-Za-z]\\w{4,34}_[0-9]{4}$", message = "实验标签不符合规范")
     private String factorTag;
     /**
      * 实验描述

@@ -49,9 +49,8 @@ public class AbtestExpInfoServiceImpl implements AbtestExpInfoService {
             return null;
         }
         //根据实验ID查询分组列表信息
-        AbtestGroupPO abtestGroupPO = new AbtestGroupPO();
-        abtestGroupPO.setExpId(abtestGroupPO.getId());
-        QueryWrapper<AbtestGroupPO> groupQueryWrapper = new QueryWrapper<>(abtestGroupPO);
+        QueryWrapper<AbtestGroupPO> groupQueryWrapper = new QueryWrapper<>();
+        groupQueryWrapper.eq("exp_id", abtestExpInfoPO.getId());
         List<AbtestGroupPO> groupPOList = abtestGroupDao.selectList(groupQueryWrapper);
         //转换构建返实验配置返回参数信息
         ConfigBO configBO = AbtestExpConvert.INSTANCE.convertConfig(abtestExpInfoPO, groupPOList);
