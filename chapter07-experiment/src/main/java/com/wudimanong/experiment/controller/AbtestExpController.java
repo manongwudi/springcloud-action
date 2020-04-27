@@ -3,8 +3,10 @@ package com.wudimanong.experiment.controller;
 import com.wudimanong.experiment.client.entity.ResponseResult;
 import com.wudimanong.experiment.client.entity.bo.CreateExpBO;
 import com.wudimanong.experiment.client.entity.bo.GetExpInfosBO;
+import com.wudimanong.experiment.client.entity.bo.UpdateFlowRatioBO;
 import com.wudimanong.experiment.client.entity.dto.CreateExpDTO;
 import com.wudimanong.experiment.client.entity.dto.GetExpInfosDTO;
+import com.wudimanong.experiment.client.entity.dto.UpdateFlowRatioDTO;
 import com.wudimanong.experiment.service.AbtestExpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +48,20 @@ public class AbtestExpController {
      * @param createExpDTO
      * @return
      */
-    @PostMapping("createExp")
+    @PostMapping("/createExp")
     public ResponseResult<CreateExpBO> createExp(@RequestBody @Validated CreateExpDTO createExpDTO) {
         return ResponseResult.OK(abtestExpServiceImpl.createExp(createExpDTO));
+    }
+
+    /**
+     * 修改实验流量占比
+     *
+     * @param updateFlowRatioDTO
+     * @return
+     */
+    @PostMapping("/updateFlowRatio")
+    public ResponseResult<UpdateFlowRatioBO> updateFlowRatio(
+            @RequestBody @Validated UpdateFlowRatioDTO updateFlowRatioDTO) {
+        return ResponseResult.OK(abtestExpServiceImpl.updateFlowRatio(updateFlowRatioDTO));
     }
 }

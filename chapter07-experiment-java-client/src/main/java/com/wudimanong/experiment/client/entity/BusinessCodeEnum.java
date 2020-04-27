@@ -15,7 +15,8 @@ public enum BusinessCodeEnum {
      */
     BUSI_LOGICAL_FAIL_2000(2000, "factor已存在实验"),
     BUSI_LOGICAL_LAYER_IS_NOT_EXIST(2001, "分层信息不存在"),
-    BUSI_LOGICAL_OVER_AVAILABLE_FLOW(2002, "超出可用流量");
+    BUSI_LOGICAL_OVER_AVAILABLE_FLOW(2002, "超出可用流量"),
+    BUSI_LOGICAL_EXP_IS_NOT_EXIST(2003, "实验信息不存在");
 
     /**
      * 编码

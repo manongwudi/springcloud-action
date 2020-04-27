@@ -7,8 +7,11 @@ import com.wudimanong.experiment.client.entity.AbtestExpInfo;
 import com.wudimanong.experiment.client.entity.BusinessCodeEnum;
 import com.wudimanong.experiment.client.entity.bo.CreateExpBO;
 import com.wudimanong.experiment.client.entity.bo.GetExpInfosBO;
+import com.wudimanong.experiment.client.entity.bo.GroupFlowRatioBO;
+import com.wudimanong.experiment.client.entity.bo.UpdateFlowRatioBO;
 import com.wudimanong.experiment.client.entity.dto.CreateExpDTO;
 import com.wudimanong.experiment.client.entity.dto.GetExpInfosDTO;
+import com.wudimanong.experiment.client.entity.dto.UpdateFlowRatioDTO;
 import com.wudimanong.experiment.convert.AbtestExpConvert;
 import com.wudimanong.experiment.dao.mapper.AbtestExpInfoDao;
 import com.wudimanong.experiment.dao.mapper.AbtestGroupDao;
@@ -25,8 +28,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -147,6 +152,51 @@ public class AbtestExpServiceImpl implements AbtestExpService {
                             Collectors.toList()), flowRatioMap);
         }
         return CreateExpBO.builder().isSuccess(true).expId(abtestExpInfoPO.getId()).build();
+    }
+
+    /**
+     * 修改实验流量占比
+     *
+     * @param updateFlowRatioDTO
+     * @return
+     */
+    @Override
+    public UpdateFlowRatioBO updateFlowRatio(UpdateFlowRatioDTO updateFlowRatioDTO) {
+        //获取实验基本信息
+        QueryWrapper<AbtestExpInfoPO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("factor_tag", updateFlowRatioDTO.getFactorTag());
+        queryWrapper.eq("service_name", updateFlowRatioDTO.getAppName());
+        AbtestExpInfoPO abtestExpInfoPO = abtestExpInfoDao.selectOne(queryWrapper);
+        if (abtestExpInfoPO == null) {
+            throw new ServiceException(BusinessCodeEnum.BUSI_LOGICAL_EXP_IS_NOT_EXIST.getCode(),
+                    BusinessCodeEnum.BUSI_LOGICAL_EXP_IS_NOT_EXIST.getDesc());
+        }
+        //获取实验分层信息
+        AbtestLayerPO abtestLayerPO = abtestLayerDao.selectById(abtestExpInfoPO.getLayerId());
+        if (abtestLayerPO == null) {
+            throw new ServiceException(BusinessCodeEnum.BUSI_LOGICAL_LAYER_IS_NOT_EXIST.getCode(),
+                    BusinessCodeEnum.BUSI_LOGICAL_LAYER_IS_NOT_EXIST.getDesc());
+        }
+        //获取实验分组信息
+        Map<String, Object> param = new HashMap<>();
+        param.put("exp_id", abtestExpInfoPO.getId());
+        List<AbtestGroupPO> groupList = abtestGroupDao.selectByMap(param);
+        //筛选需要调整的分组(目标分组流量与当前分组流量占比不一致的才需要调整)
+        List<AbtestGroupPO> oldGroupList = groupList.stream().filter(group -> !Objects.equals(group.getFlowRatio(),
+                updateFlowRatioDTO.getFlowRatioParam().getOrDefault(group.getId(), 0)))
+                .collect(Collectors.toList());
+        //调用公共流量调整方法进行流量调节（与实验创建共用）
+        updateFlowRatio(abtestExpInfoPO, abtestLayerPO, oldGroupList, updateFlowRatioDTO.getFlowRatioParam());
+        //封装流量调节后的结果数据
+        List<GroupFlowRatioBO> groupFlowRatioResult = groupList.stream()
+                .map(group -> GroupFlowRatioBO.builder().groupId(group.getId()).groupType(group.getGroupType())
+                        .preFlowRatio(group.getFlowRatio())
+                        .flowRatio(updateFlowRatioDTO.getFlowRatioParam().get(group.getId())).build())
+                .collect(Collectors.toList());
+        //封装返回参数对象
+        UpdateFlowRatioBO updateFlowRatioBO = UpdateFlowRatioBO.builder().appName(updateFlowRatioDTO.getAppName())
+                .factorTag(updateFlowRatioDTO.getFactorTag()).flowRatio(groupFlowRatioResult).build();
+        return updateFlowRatioBO;
     }
 
     /**
@@ -313,8 +363,11 @@ public class AbtestExpServiceImpl implements AbtestExpService {
                     }).reduce(Function::andThen)
                     .ifPresent(func -> {
                         //更新分层信息中的未使用分桶编号信息
-                        List<Integer> layerUnusedBucketNos = Arrays.asList(layer.getUnusedBucketNos().split(","))
-                                .stream().map(o -> Integer.valueOf(o)).collect(Collectors.toList());
+                        List<Integer> layerUnusedBucketNos =
+                                (layer.getUnusedBucketNos() != null && !"".equals(layer.getUnusedBucketNos())) ? Arrays
+                                        .asList(layer.getUnusedBucketNos().split(","))
+                                        .stream().map(o -> Integer.valueOf(o)).collect(Collectors.toList())
+                                        : new ArrayList<>();
                         String unused = StringUtils.join(func.apply(layerUnusedBucketNos).toArray(), ",");
                         layer.setUnusedBucketNos(unused);
                         layer.setUpdateTime(new Timestamp(System.currentTimeMillis()));
