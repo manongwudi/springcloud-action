@@ -7,7 +7,7 @@ import com.wudimanong.experiment.dao.mapper.AbtestExpInfoDao;
 import com.wudimanong.experiment.dao.mapper.AbtestGroupDao;
 import com.wudimanong.experiment.dao.model.AbtestExpInfoPO;
 import com.wudimanong.experiment.dao.model.AbtestGroupPO;
-import com.wudimanong.experiment.service.AbtestExpInfoService;
+import com.wudimanong.experiment.service.AbtestDeliverService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class AbtestExpInfoServiceImpl implements AbtestExpInfoService {
+public class AbtestDeliverServiceImpl implements AbtestDeliverService {
 
     /**
      * 实验信息持久层接口

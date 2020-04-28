@@ -2,7 +2,7 @@ package com.wudimanong.experiment.controller;
 
 import com.wudimanong.experiment.client.entity.ResponseResult;
 import com.wudimanong.experiment.client.entity.bo.ConfigBO;
-import com.wudimanong.experiment.service.AbtestExpInfoService;
+import com.wudimanong.experiment.service.AbtestDeliverService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class AbtestDeliverController {
      * 实验配置业务层依赖接口
      */
     @Autowired
-    private AbtestExpInfoService abtestExpInfoServiceImpl;
+    private AbtestDeliverService abtestDeliverServiceImpl;
 
     /**
      * 根据实验业务标签获取实验信息
@@ -32,6 +32,6 @@ public class AbtestDeliverController {
      */
     @GetMapping("/findByFactorTag")
     public ResponseResult<ConfigBO> findByFactorTag(@RequestParam("factorTag") String factorTag) {
-        return ResponseResult.OK(abtestExpInfoServiceImpl.getExpInfoByFactorTag(factorTag));
+        return ResponseResult.OK(abtestDeliverServiceImpl.getExpInfoByFactorTag(factorTag));
     }
 }
