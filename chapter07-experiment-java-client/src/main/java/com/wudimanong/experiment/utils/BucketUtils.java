@@ -5,6 +5,8 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author jiangqiao
@@ -132,5 +134,16 @@ public class BucketUtils {
         BitSet bitSet = new BitSet(BUCKET_TOTAL_NUM);
         bucketNos.forEach(bitSet::set);
         return Base64.getUrlEncoder().encodeToString(bitSet.toByteArray());
+    }
+
+    /**
+     * 将经过Base64压缩的分桶数据解压成Set<Integer>类型
+     *
+     * @param str
+     * @return
+     */
+    public static Set<Integer> bitStr2buckets(String str) {
+        BitSet bitSet = BitSet.valueOf(Base64.getUrlDecoder().decode(str));
+        return bitSet.stream().boxed().collect(Collectors.toSet());
     }
 }
