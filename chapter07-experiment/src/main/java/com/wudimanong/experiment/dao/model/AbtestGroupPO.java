@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.wudimanong.experiment.client.entity.AbtestGroup;
 import com.wudimanong.experiment.utils.BucketUtils;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -97,8 +98,13 @@ public class AbtestGroupPO {
      */
     public static AbtestGroup mapGroup(AbtestGroupPO abtestGroupPO) {
         //分流内包含的桶编号列表
-        List<Integer> partitionSerialNums = Arrays.asList(abtestGroupPO.getGroupPartitionDetails().split(",")).stream()
-                .map(o -> Integer.valueOf(o)).collect(Collectors.toList());
+        List<Integer> partitionSerialNums = null;
+        if (abtestGroupPO.getGroupPartitionDetails() != null && !"".equals(abtestGroupPO.getGroupPartitionDetails())) {
+            partitionSerialNums = Arrays.asList(abtestGroupPO.getGroupPartitionDetails().split(",")).stream()
+                    .map(o -> Integer.valueOf(o)).collect(Collectors.toList());
+        } else {
+            partitionSerialNums = new ArrayList<>();
+        }
         //判断桶数量大小是否>100，以此决定传输时是否启用压缩
         boolean useBase64Nums = partitionSerialNums.size() > 100;
         AbtestGroup group = new AbtestGroup();
