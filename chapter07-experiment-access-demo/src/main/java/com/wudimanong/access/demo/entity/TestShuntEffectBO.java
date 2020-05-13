@@ -13,4 +13,8 @@ public class TestShuntEffectBO {
     private Long uid;
 
     private Boolean isNewLogic;
+
+    private Integer testGroupCounter;
+
+    private Integer controlGroupCounter;
 }
