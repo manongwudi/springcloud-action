@@ -1,9 +1,0 @@
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/entity/model/OauthRole.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/feign/OauthResourceClientFallbackFactory.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/entity/ResponseData.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/feign/OauthResourceClientConfiguration.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/entity/model/OauthModuleResources.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/entity/enums/ResponseCode.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/entity/model/OauthClientDetails.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/entity/model/OauthUser.java
-/Users/qiaojiang/dev-tools/workspace/springcloud_workspace/springcloud-action/chapter03-oauth-resourceserver-client/src/main/java/com/wudimanong/oauth/feign/OauthResourceClient.java
