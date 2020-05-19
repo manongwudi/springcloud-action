@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    #防止乱码添加字符集
+    url: jdbc:mysql://127.0.0.1:3306/resource?zeroDateTimeBehavior=convertToNull&useUnicode=true&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    separator: //
