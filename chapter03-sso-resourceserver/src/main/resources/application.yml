@@ -7,3 +7,11 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
     separator: //
+
+#资源服务器相关配置
+security:
+  oauth2:
+    checkTokenUrl: http://localhost:9092/oauth/check_token
+    clientId: resourceClient
+    clientSecret: 123456
+
