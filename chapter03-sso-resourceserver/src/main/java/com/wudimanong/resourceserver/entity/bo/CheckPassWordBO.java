@@ -11,8 +11,22 @@ import lombok.Data;
 public class CheckPassWordBO {
 
     /**
-     * 认证结果
+     * 用户名
      */
-    private Boolean result;
+    private String userName;
 
+    /**
+     * 密码
+     */
+    private String passWord;
+
+    /**
+     * 加盐值
+     */
+    private String salt;
+
+    /**
+     * 用户权限
+     */
+    private String authorities;
 }
