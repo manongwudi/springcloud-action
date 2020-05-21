@@ -4,12 +4,17 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <!--定义查询表单-->
             <el-form :inline="true" :model="filters">
-                <el-form-item>
-                    <el-input v-model="filters.name" placeholder="实验名称"></el-input>
-                    <el-select v-model="filters.status" placeholder="请选择状态" @change="styleChange">
-                           <el-option v-for="item in optionStatus" :key="item.value" :label="item.label" :value="item.value"/>
-                    </el-select>
-                </el-form-item>
+              <!--条件查询筛选框-->
+              <el-form-item>
+                <el-input v-model="filters.name" placeholder="实验名称"></el-input>
+                <el-select v-model="filters.status" placeholder="请选择状态" @change="styleChange">
+                  <el-option v-for="item in optionStatus" :key="item.value" :label="item.label" :value="item.value"/>
+                </el-select>
+              </el-form-item>
+              <!--条件查询按钮-->
+              <el-form-item>
+                <el-button type="primary" v-on:click="getExpInfos">查询</el-button>
+              </el-form-item>
             </el-form>
         </el-col>
         <!--具体的数据列表-->
@@ -49,7 +54,7 @@ export default {
       editFormVisible: false, // 编辑界面是否显示
       editFormRules: {
         name: [
-          {required: true, message: '请输入姓名', trigger: 'blur'}
+          {required: true, message: '请输入实验业务标签', trigger: 'blur'}
         ]
       },
       // 定义状态下拉选
@@ -108,16 +113,20 @@ export default {
     // 获取实验信息列表
     getExpInfos () {
       let para = {
-        page: this.page,
+        pageNo: this.page,
         name: this.filters.name
       }
       this.listLoading = true
       getExpInfosListPage(para).then((res) => {
         this.total = res.data.total
-        this.users = res.data.expInfos
+        this.expInfos = res.data.expInfos
         this.listLoading = false
       })
     }
+  },
+  // 添加Vue钩子，页面渲染后获取实验列表信息
+  mounted () {
+    this.getExpInfos()
   }
 }
 </script>

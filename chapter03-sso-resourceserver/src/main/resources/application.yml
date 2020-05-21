@@ -8,6 +8,12 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     separator: //
 
+#Mybatis配置
+mybatis:
+  mapper-locations: classpath:mybatis/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
 #资源服务器相关配置
 security:
   oauth2:

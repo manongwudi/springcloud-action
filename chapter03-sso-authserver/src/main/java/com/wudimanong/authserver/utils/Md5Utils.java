@@ -1,6 +1,7 @@
 package com.wudimanong.authserver.utils;
 
 import java.security.MessageDigest;
+import java.util.UUID;
 
 /**
  * @author qiaojiang
@@ -49,5 +50,12 @@ public class Md5Utils {
         int d1 = n / 16;
         int d2 = n % 16;
         return hexDigits[d1] + hexDigits[d2];
+    }
+
+    public static void main(String[] args) {
+        String salt = UUID.randomUUID().toString().replaceAll("-", "");
+        String passWord = "123456&" + salt;
+        String realPassWord = Md5Utils.md5Hex(passWord, "UTF-8");
+        System.out.println("salt->" + salt + ";realPassword->" + realPassWord);
     }
 }

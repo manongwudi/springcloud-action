@@ -25,19 +25,6 @@ const router = new VueRouter({
   routes
 })
 
-// 验证会话是否存在，不存在则跳转到登录页面
-/* routes.beforeEach((to, from, next) => {
-  if (to.path === '/login') {
-    sessionStorage.removeItem('user')
-  }
-  let user = JSON.parse(sessionStorage.getItem('user'))
-  if (!user && to.path !== '/login') {
-    next({ path: '/login' })
-  } else {
-    next()
-  }
-}) */
-
 /* eslint-disable no-new */
 new Vue({
   // el: '#app',

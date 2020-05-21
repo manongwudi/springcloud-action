@@ -17,3 +17,6 @@ create table `oauth_user_details` (
   `update_by` varchar(100) not null default '' comment '最后更新人',
   primary key (`user_name`)
 ) engine=innodb default charset=utf8 comment '外部用户详细信息表';
+
+#配置测试用户信息
+insert into `resource`.`oauth_user_details`(`user_name`, `password`, `salt`, `nick_name`, `mobile`, `gender`, `authorities`, `non_expired`, `non_locked`, `credentials_non_expired`, `enabled`, `create_time`, `create_by`, `update_time`, `update_by`) VALUES ('wudimanong', '7b952cb6a19dad78e50cbff9dde121ef', 'e7909fd872764f0fa286a93c73441e71', '无敌码农', '18610380625', 3, 'all', 1, 1, 1, 1, '2020-05-21 05:59:07', 'system', '2020-05-21 05:59:07', '');

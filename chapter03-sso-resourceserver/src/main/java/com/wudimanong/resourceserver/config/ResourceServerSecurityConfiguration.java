@@ -1,6 +1,7 @@
 package com.wudimanong.resourceserver.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -20,5 +21,16 @@ public class ResourceServerSecurityConfiguration extends WebSecurityConfigurerAd
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/user/**").authenticated();
         http.csrf().disable();
+    }
+
+    /**
+     * 安全路径过滤
+     *
+     * @param web
+     * @throws Exception
+     */
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/auth/**", "/actuator/health");
     }
 }

@@ -11,7 +11,12 @@ public enum GlobalCodeEnum {
     GL_FAIL_9996(996, "不支持的HttpMethod"),
     GL_FAIL_9997(997, "HTTP错误"),
     GL_FAIL_9998(998, "参数错误"),
-    GL_FAIL_9999(999, "系统异常");
+    GL_FAIL_9999(999, "系统异常"),
+
+    /**
+     * 认证授权业务异常码定义
+     */
+    BUSI_INVALID_GRANT(1001, "非法授权操作");
 
     /**
      * 编码
