@@ -1,4 +1,4 @@
-package com.wudimanong.resourceserver.utils;
+package com.wudimanong.authserver.utils;
 
 import java.security.MessageDigest;
 

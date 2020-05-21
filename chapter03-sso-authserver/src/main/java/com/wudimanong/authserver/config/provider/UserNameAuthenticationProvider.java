@@ -1,5 +1,6 @@
 package com.wudimanong.authserver.config.provider;
 
+import com.wudimanong.authserver.utils.Md5Utils;
 import lombok.Data;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -46,12 +47,13 @@ public class UserNameAuthenticationProvider extends AbstractUserDetailsAuthentic
             throw new BadCredentialsException(this.messages
                     .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         } else {
+            //获取用户输入的密码凭证
             String presentedPassword = authentication.getCredentials().toString();
             //约定输入密码信息，拆分加密值
             String[] strArray = userDetails.getPassword().split(",");
             String userPasswordEncodeValue = strArray[0];
-            String presentedPasswordEncodeValue = "";//Md5Utils.MD5Encode(strArray[1] + "_" + presentedPassword, "UTF-8");
-            if (userPasswordEncodeValue.equals(presentedPasswordEncodeValue)) {
+            String presentedPasswordEncodeValue = Md5Utils.md5Hex(presentedPassword + "&" + strArray[1], "UTF-8");
+            if (!userPasswordEncodeValue.equals(presentedPasswordEncodeValue)) {
                 this.logger.debug("Authentication failed: password does not match stored value");
                 throw new BadCredentialsException(this.messages
                         .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
