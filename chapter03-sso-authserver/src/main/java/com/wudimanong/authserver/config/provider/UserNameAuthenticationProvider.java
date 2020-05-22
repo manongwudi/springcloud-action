@@ -34,11 +34,8 @@ public class UserNameAuthenticationProvider extends AbstractUserDetailsAuthentic
     }
 
     /**
-     * @param userDetails
-     * @param authentication
-     * @throws AuthenticationException
+     * 重写授权认证检查方法，实现自定义的用户账号密码验证
      */
-
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails,
             UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {

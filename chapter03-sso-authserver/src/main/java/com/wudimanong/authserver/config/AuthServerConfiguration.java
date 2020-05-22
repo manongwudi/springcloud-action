@@ -42,6 +42,12 @@ public class AuthServerConfiguration extends AuthorizationServerConfigurerAdapte
      */
     AuthenticationManager authenticationManager;
 
+    /**
+     * 构造方法
+     *
+     * @param authenticationConfiguration
+     * @throws Exception
+     */
     public AuthServerConfiguration(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
     }
@@ -57,9 +63,13 @@ public class AuthServerConfiguration extends AuthorizationServerConfigurerAdapte
         clients.withClientDetails(new JdbcClientDetailsService(dataSource));
     }
 
+    /**
+     * 授权认证服务器相关服务端点配置
+     *
+     * @param endpoints
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        //数据库管理access_token和refresh_token
         //配置TokenService参数
         DefaultTokenServices tokenServices = new DefaultTokenServices();
         tokenServices.setTokenStore(getJdbcTokenStore());

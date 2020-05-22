@@ -8,6 +8,7 @@
 </head>
 <body>
 <div class="authcenter" id="J-authcenter">
+    <!--头部代码定义-->
     <div class="authcenter-head">
         <div class="container fn-clear">
             <ul class="container-left">
@@ -20,7 +21,7 @@
             </ul>
         </div>
     </div>
-
+    <!--登录代码Form表单定义-->
     <div class="authcenter-body fn-clear">
         <div class="authcenter-body-login">
             <ul class="ui-nav" id="J-loginMethod-tabs">
@@ -29,8 +30,7 @@
             <div class="login login-modern " id="J-login">
                 <form name="loginForm" id="login" action="/login" method="post" class="ui-form"
                       novalidate="novalidate"
-                      data-widget-cid="widget-3" data-qrcode="false"><input type="hidden" name="ua" id="UA_InputId"
-                                                                            value="">
+                      data-widget-cid="widget-3" data-qrcode="false"><input type="hidden" name="ua" id="UA_InputId" value="">
                     <fieldset>
                         <div class="ui-form-item" id="J-username">
                             <label id="J-label-user" class="ui-label">
@@ -50,14 +50,12 @@
                             <p class="ui-form-other ui-form-other-fg">
                                 <a class="textlink forgot" href="javascript:void(0)" tabindex="5"></a>
                             </p>
-
                             <#if _csrf??>
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             </#if>
-
                             <div class="ui-form-explain"></div>
                         </div>
-
+                        <!--登录按钮-->
                         <div class="ui-form-item ui-form-item-30pd" id="J-submit">
                             <input type="submit" value="登 录" class="ui-button" id="J-login-btn">
                             <p class="ui-form-other">
@@ -70,7 +68,7 @@
         </div>
     </div>
 </div>
-
+<!--页面尾部定义-->
 <div class="authcenter-foot" id="J-authcenter-foot">
     <div class="authcenter-foot-container">
         <p class="authcenter-foot-link">

@@ -35,6 +35,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/css/**", "/js/**", "/fonts/**", "/icon/**", "/images/**", "/favicon.ico");
     }
 
+    /**
+     * 放开部分认证授权入口服务的访问限制
+     *
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.requestMatchers().antMatchers("/login", "/oauth/authorize", "/oauth/check_token").and().authorizeRequests()
@@ -43,11 +49,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
     }
 
+    /**
+     * 认证管理配置
+     *
+     * @param auth
+     */
     @Override
     public void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
+    /**
+     * 授权用户信息数据库提供者对象配置
+     *
+     * @return
+     */
     @Bean
     public AbstractUserDetailsAuthenticationProvider daoAuthenticationProvider() {
         UserNameAuthenticationProvider authProvider = new UserNameAuthenticationProvider();
