@@ -24,7 +24,7 @@ public class AuthSignatureGlobalFilter implements GlobalFilter, Ordered {
             return exchange.getResponse().setComplete();
         }
         //应用accessToken有效性（这里只是简单判空，可以根据实际业务场景进行扩展）
-        String accessToken = exchange.getRequest().getHeaders().getFirst("accessToken");
+        String accessToken = exchange.getRequest().getHeaders().getFirst("access_token");
         if (accessToken == null) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
