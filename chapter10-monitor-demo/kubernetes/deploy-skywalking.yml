@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chapter10-monitor-demo
+spec:
+  selector:
+    matchLabels:
+      app: chapter10-monitor-demo
+  replicas: 1
+  #设置滚动升级策略
+  #Kubernetes在等待设置的时间后才开始进行升级，例如5秒
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      #升级过程中最多可以比原先设置多出的Pod数量
+      maxSurge: 1
+      #升级过程中Deployment控制器最多可以删除多少个旧Pod，主要用于提供缓冲时间
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: chapter10-monitor-demo
+    spec:
+      #构建初始化镜像(通过初始化镜像的方式集成SkyWalking Agent)
+      initContainers:
+        - image: 10.211.55.2:8080/springcloud-action/skywalking-agent-sidecar:latest
+          name: skywalking-agent-sidecar
+          imagePullPolicy: IfNotPresent
+          command: ["sh"]
+          args:
+            [
+              "-c",
+              "mkdir -p /skywalking/agent && cp -r /usr/skywalking/agent/* /skywalking/agent",
+            ]
+          volumeMounts:
+            - mountPath: /skywalking/agent
+              name: skywalking-agent
+      containers:
+        - name: chapter10-devops-demo
+          image: 10.211.55.2:8080/springcloud-action/chapter10-monitor-demo:latest
+          env:
+            - name: JAVA_OPTS
+              value: -javaagent:/usr/skywalking/agent/skywalking-agent.jar
+            - name: SKYWALKING_AGENT_NAME
+              value: chapter10-devops-demo
+            - name: SKYWALKING_AGENT_COLLECTOR_BACKEND_SERVICES
+              # FQDN: servicename.namespacename.svc.cluster.local
+              value: oap.skywalking:11800
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SPRING_PROFILES_ACTIVE
+              value: test
+          volumeMounts:
+            - mountPath: /usr/skywalking/agent
+              name: skywalking-agent
+      volumes:
+        - name: skywalking-agent
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chapter10-monitor-demo
+  labels:
+    svc: chapter10-monitor-demo
+spec:
+  selector:
+    app: chapter10-monitor-demo
+  ports:
+    - name: http
+      port: 8080
+      nodePort: 30001
+  type: NodePort

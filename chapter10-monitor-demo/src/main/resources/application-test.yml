@@ -1,5 +1,9 @@
 spring:
   cloud:
+    #独立部署的consul注册中心地址(根据自己本地实际环境填写)
     consul:
-      host: 10.211.55.12
+      host: 10.211.55.2
       port: 8500
+
+# Logging
+logging.level.org.springframework: DEBUG

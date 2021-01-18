@@ -55,28 +55,13 @@
 
     <properties>
         <!--定义Docker镜像仓库地址-->
-        <docker.repository>10.211.55.11:8088</docker.repository>
+        <!--<dockercker.repository>10.211.55.11:8088</dockercker.repository>-->
+        <docker.repository>10.211.55.2:8080</docker.repository>
         <!--定义项目名称作为镜像名称生成的组成部分-->
-        <app.name>chapter09-devops-demo</app.name>
+        <app.name>chapter10-monitor-demo</app.name>
     </properties>
     <build>
         <plugins>
-            <!--序列号生成插件-->
-            <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <shortRevisionLength>7</shortRevisionLength>
-                </configuration>
-            </plugin>-->
             <!--引入Spring Boot Maven编译插件-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
