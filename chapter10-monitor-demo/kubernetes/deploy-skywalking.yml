@@ -25,7 +25,7 @@ spec:
       #构建初始化镜像(通过初始化镜像的方式集成SkyWalking Agent)
       initContainers:
         - image: 10.211.55.2:8080/springcloud-action/skywalking-agent-sidecar:latest
-          name: skywalking-agent-sidecar
+          name: sw-agent-sidecar
           imagePullPolicy: IfNotPresent
           command: ["sh"]
           args:
@@ -35,27 +35,27 @@ spec:
             ]
           volumeMounts:
             - mountPath: /skywalking/agent
-              name: skywalking-agent
+              name: sw-agent
       containers:
         - name: chapter10-devops-demo
           image: 10.211.55.2:8080/springcloud-action/chapter10-monitor-demo:latest
           env:
             - name: JAVA_OPTS
               value: -javaagent:/usr/skywalking/agent/skywalking-agent.jar
-            - name: SKYWALKING_AGENT_NAME
+            - name: SW_AGENT_NAME
               value: chapter10-devops-demo
-            - name: SKYWALKING_AGENT_COLLECTOR_BACKEND_SERVICES
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
               # FQDN: servicename.namespacename.svc.cluster.local
-              value: oap.skywalking:11800
+              value: 10.211.55.12:11800
             - name: SERVER_PORT
               value: "8080"
             - name: SPRING_PROFILES_ACTIVE
               value: test
           volumeMounts:
             - mountPath: /usr/skywalking/agent
-              name: skywalking-agent
+              name: sw-agent
       volumes:
-        - name: skywalking-agent
+        - name: sw-agent
           emptyDir: {}
 ---
 apiVersion: v1

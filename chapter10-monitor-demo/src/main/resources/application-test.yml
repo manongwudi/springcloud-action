@@ -5,5 +5,18 @@ spring:
       host: 10.211.55.2
       port: 8500
 
+  datasource:
+    url: jdbc:mysql://10.211.55.2:3306/monitor_test
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    separator: //
+
+  redis:
+    host: 10.211.55.2
+    port: 6379
+    password: 123456
+
 # Logging
-logging.level.org.springframework: DEBUG
+logging.level.org.springframework: INFO
