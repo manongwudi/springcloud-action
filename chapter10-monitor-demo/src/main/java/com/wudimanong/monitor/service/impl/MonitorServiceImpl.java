@@ -14,9 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class MonitorServiceImpl implements MonitorService {
 
+    /**
+     * 持久层组件
+     */
     @Autowired
     private TestInfoDao testInfoDao;
-
+    /**
+     * Redis访问组件
+     */
     @Autowired
     private RedisTemplate redisTemplate;
 
