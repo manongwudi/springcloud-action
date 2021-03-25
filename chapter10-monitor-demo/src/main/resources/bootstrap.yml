@@ -1,6 +1,6 @@
 spring:
   application:
-    name: monitor-demo
+    name: chapter10-monitor-demo
   profiles:
     active: debug
   cloud:
@@ -11,3 +11,19 @@ spring:
         healthCheckPath: /actuator/health
 server:
   port: 9092
+
+# Metrics指标采集端点开启配置
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true

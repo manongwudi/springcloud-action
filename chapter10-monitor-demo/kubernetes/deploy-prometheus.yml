@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: chapter10-monitor-demo
-  replicas: 0
+  replicas: 1
   #设置滚动升级策略
   #Kubernetes在等待设置的时间后才开始进行升级，例如5秒
   minReadySeconds: 5
@@ -49,5 +49,5 @@ spec:
       #Pod上的端口（与制作容器时暴露的端口一致,微服务工程代码中指定的端口）
       targetPort: 8080
       #K8s集群外部访问的端口（外部机器访问）
-      nodePort: 30001
+      nodePort: 30002
   type: NodePort

@@ -1,5 +1,8 @@
 package com.wudimanong.monitor.controller;
 
+import com.wudimanong.monitor.metrics.annotation.Count;
+import com.wudimanong.monitor.metrics.annotation.Monitor;
+import com.wudimanong.monitor.metrics.annotation.Tp;
 import com.wudimanong.monitor.service.MonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,9 @@ public class MonitorController {
     @Autowired
     private MonitorService monitorServiceImpl;
 
+    //@Tp(description = "/monitor/test")
+    //@Count(description = "/monitor/test")
+    @Monitor(description = "/monitor/test")
     @GetMapping("/test")
     public String monitorTest(@RequestParam("name") String name) {
         monitorServiceImpl.monitorTest(name);
