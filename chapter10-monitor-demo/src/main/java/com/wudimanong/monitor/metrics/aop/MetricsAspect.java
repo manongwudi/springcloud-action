@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class MetricsAspect {
 
+    /**
+     * Prometheus指标管理
+     */
     private MeterRegistry registry;
 
     private Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinPoint;
@@ -39,6 +42,9 @@ public class MetricsAspect {
         this.tagsBasedOnJoinPoint = tagsBasedOnJoinPoint;
     }
 
+    /**
+     * 针对@Tp指标配置注解的逻辑实现
+     */
     @Around("@annotation(com.wudimanong.monitor.metrics.annotation.Tp)")
     public Object timedMethod(ProceedingJoinPoint pjp) throws Throwable {
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
@@ -54,6 +60,7 @@ public class MetricsAspect {
         } finally {
             try {
                 String finalExceptionClass = exceptionClass;
+                //创建定义计数器，并设置指标的Tags信息（名称可以自定义）
                 Timer timer = Metrics.newTimer("tp.method.timed",
                         builder -> builder.tags(new String[]{"exception", finalExceptionClass})
                                 .tags(this.tagsBasedOnJoinPoint.apply(pjp)).tag("description", tp.description())
@@ -64,6 +71,9 @@ public class MetricsAspect {
         }
     }
 
+    /**
+     * 针对@Count指标配置注解的逻辑实现
+     */
     @Around("@annotation(com.wudimanong.monitor.metrics.annotation.Count)")
     public Object countMethod(ProceedingJoinPoint pjp) throws Throwable {
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
@@ -78,6 +88,7 @@ public class MetricsAspect {
         } finally {
             try {
                 String finalExceptionClass = exceptionClass;
+                //创建定义计数器，并设置指标的Tags信息（名称可以自定义）
                 Counter counter = Metrics.newCounter("count.method.counted",
                         builder -> builder.tags(new String[]{"exception", finalExceptionClass})
                                 .tags(this.tagsBasedOnJoinPoint.apply(pjp)).tag("description", count.description())
@@ -88,6 +99,9 @@ public class MetricsAspect {
         }
     }
 
+    /**
+     * 针对@Monitor通用指标配置注解的逻辑实现
+     */
     @Around("@annotation(com.wudimanong.monitor.metrics.annotation.Monitor)")
     public Object monitorMethod(ProceedingJoinPoint pjp) throws Throwable {
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
