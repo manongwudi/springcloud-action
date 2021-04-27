@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ElasticTask {
-
     /**
      * 注解属性，用于定义任务名称
      */
@@ -68,5 +67,4 @@ public @interface ElasticTask {
      * 注解属性，配置是否开启错误任务重新执行
      */
     boolean misfire() default true;
-
 }
