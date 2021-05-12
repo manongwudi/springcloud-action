@@ -66,7 +66,7 @@
             <artifactId>elasticjob-springboot-starter</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!--在starter依赖包中已经引入了以下依赖，但是依赖关联存在包版本冲突，这里除引入starter依赖外，还要单独再引入下-->
+        <!--在starter依赖包中已经引入了以下依赖，但是依赖关联存在包版本冲突，这里除引入starter依赖外，还要单独再引入Zk客户端-->
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
