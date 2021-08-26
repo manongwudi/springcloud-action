@@ -1,2 +1,2 @@
 # springcloud-action
-《Spring Cloud微服务互联网项目实战》源码
+《Spring Cloud微服务项目实战派》源码
